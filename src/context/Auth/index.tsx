@@ -45,7 +45,6 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const { user } = await signInWithEmailAndPassword(auth, email, password);
       setCurrentUser(user);
     } catch (error: any) {
-      console.log(error.message);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -63,7 +62,6 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       setCurrentUser(user);
     } catch (error: any) {
-      console.log(error.message);
       setError(error.message);
     } finally {
       setLoading(false);
