@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, StyleSheet } from "react-native";
+import { View, SafeAreaView, StyleSheet } from "react-native";
 import React from "react";
 import { useAuth } from "../context/Auth";
 import AuthStack from "./AuthStack";
@@ -14,7 +14,7 @@ const AppStack = () => {
     <View style={styles.container}>
       <SafeAreaView style={styles.rootScreen}>
         <StatusBar style="light" />
-        <HomeStack />
+        {currentUser ? <HomeStack /> : <AuthStack />}
       </SafeAreaView>
     </View>
   );

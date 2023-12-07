@@ -48,6 +48,7 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setError(error.message);
     } finally {
       setLoading(false);
+      setError(null);
     }
   };
 
@@ -65,12 +66,14 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setError(error.message);
     } finally {
       setLoading(false);
+      setError(null);
     }
   };
 
   const logout = () => {
     setCurrentUser(null);
     signOut(auth);
+    setError(null);
   };
 
   useEffect(() => {
