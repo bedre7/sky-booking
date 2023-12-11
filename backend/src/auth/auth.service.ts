@@ -67,7 +67,6 @@ export class AuthService {
       if (!refreshToken) {
         throw new ForbiddenException('Invalid token');
       }
-      console.log(refreshToken);
 
       const payload = this.jwt.verify(refreshToken, {
         secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),

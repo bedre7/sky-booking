@@ -5,13 +5,13 @@ import SignupForm from "../components/Auth/SignupForm";
 import { useAuth } from "../context/Auth";
 
 const SignupScreen = () => {
-  const { loading, error, signup } = useAuth();
+  const { loading, error, signUp } = useAuth();
 
   return (
     <View style={styles.container}>
       <Image style={styles.logo} source={require("../../assets/logo.png")} />
       <Text style={styles.header}>Sign up</Text>
-      <SignupForm onSignup={signup} error={error} loading={loading} />
+      <SignupForm onSignup={signUp} error={error} loading={loading} />
     </View>
   );
 };

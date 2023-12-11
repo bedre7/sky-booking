@@ -8,24 +8,27 @@ import React, {
 import { IUser } from "./types";
 import { AuthService } from "../../services/";
 import { jwtDecode } from "jwt-decode";
-import "core-js/stable/atob"; 
+import "core-js/stable/atob";
+import { Alert } from "react-native";
 
 interface IAuthContext {
   currentUser: IUser | null;
   error: string | null;
   loading: boolean;
-  login: (email: string, password: string) => void;
-  signup: (email: string, password: string, username: string) => void;
-  logout: () => void;
+  logIn: (email: string, password: string) => void;
+  signUp: (email: string, password: string, username: string) => void;
+  logOut: () => void;
+  refresh: () => void;
 }
 
 export const AuthContext = createContext<IAuthContext>({
   currentUser: null,
   error: null,
   loading: false,
-  login: () => {},
-  signup: () => {},
-  logout: () => {},
+  logIn: () => {},
+  signUp: () => {},
+  logOut: () => {},
+  refresh: () => {},
 } as IAuthContext);
 
 export const useAuth = () => useContext(AuthContext);
@@ -35,10 +38,9 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const login = async (email: string, password: string) => {
+  const logIn = async (email: string, password: string) => {
     try {
       setLoading(true);
-      console.log("logging in");
       const { data } = await AuthService.logIn({ email, password });
       setCurrentUser(jwtDecode(data.accessToken));
     } catch (error: any) {
@@ -50,7 +52,7 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   };
 
-  const signup = async (email: string, username: string, password: string) => {
+  const signUp = async (email: string, username: string, password: string) => {
     try {
       setLoading(true);
       const { data } = await AuthService.signUp({ email, username, password });
@@ -63,15 +65,35 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   };
 
-  const logout = async () => {
-    setCurrentUser(null);
-    setError(null);
-    await AuthService.logOut();
+  const logOut = async () => {
+    try {
+      setLoading(true);
+      await AuthService.logOut();
+      setCurrentUser(null);
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+      setError(null);
+    }
+  };
+
+  const refresh = async () => {
+    try {
+      setLoading(true);
+      const { data } = await AuthService.refresh();
+      setCurrentUser(jwtDecode(data.accessToken));
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+      setError(null);
+    }
   };
 
   return (
     <AuthContext.Provider
-      value={{ currentUser, error, loading, login, signup, logout }}
+      value={{ currentUser, error, loading, logIn, signUp, logOut, refresh }}
     >
       {children}
     </AuthContext.Provider>

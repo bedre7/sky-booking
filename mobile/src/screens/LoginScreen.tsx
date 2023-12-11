@@ -5,13 +5,13 @@ import appTheme from "../styles";
 import { useAuth } from "../context/Auth";
 
 const LoginScreen = () => {
-  const { loading, error, login } = useAuth();
+  const { loading, error, logIn } = useAuth();
 
   return (
     <View style={styles.container}>
       <Image style={styles.logo} source={require("../../assets/logo.png")} />
       <Text style={styles.header}>Login</Text>
-      <LoginForm onLogin={login} error={error} loading={loading} />
+      <LoginForm onLogin={logIn} error={error} loading={loading} />
     </View>
   );
 };
