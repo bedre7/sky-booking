@@ -35,7 +35,6 @@ const HomeStack = () => {
         component={Flights}
         options={{
           headerTitleStyle: {
-            fontFamily: appTheme.fontFamily.secondary,
             fontSize: 20,
           },
           tabBarIcon: ({ color, size }) => (
@@ -48,7 +47,6 @@ const HomeStack = () => {
         component={Create}
         options={{
           headerTitleStyle: {
-            fontFamily: appTheme.fontFamily.secondary,
             fontSize: 20,
           },
           tabBarIcon: ({ color, size }) => (
@@ -61,7 +59,6 @@ const HomeStack = () => {
         component={Booking}
         options={{
           headerTitleStyle: {
-            fontFamily: appTheme.fontFamily.secondary,
             fontSize: 20,
           },
           tabBarIcon: ({ color, size }) => (
@@ -74,7 +71,6 @@ const HomeStack = () => {
         component={Tickets}
         options={{
           headerTitleStyle: {
-            fontFamily: appTheme.fontFamily.secondary,
             fontSize: 20,
           },
           tabBarIcon: ({ color, size }) => (
@@ -87,7 +83,6 @@ const HomeStack = () => {
         component={Profile}
         options={{
           headerTitleStyle: {
-            fontFamily: appTheme.fontFamily.secondary,
             fontSize: 20,
           },
           tabBarIcon: ({ color, size }) => (

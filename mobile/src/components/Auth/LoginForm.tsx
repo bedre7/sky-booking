@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     fontSize: 14,
     color: appTheme.colors.gray3,
-    fontFamily: appTheme.fontFamily.primary,
     textAlign: "center",
   },
   error: {

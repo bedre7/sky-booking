@@ -3,16 +3,12 @@ import React, {
   ReactNode,
   createContext,
   useContext,
-  useEffect,
   useState,
 } from "react";
 import { IUser } from "./types";
-import { auth } from "../../firebase";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
+import { AuthService } from "../../services/";
+import { jwtDecode } from "jwt-decode";
+import "core-js/stable/atob"; 
 
 interface IAuthContext {
   currentUser: IUser | null;
@@ -42,9 +38,11 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const login = async (email: string, password: string) => {
     try {
       setLoading(true);
-      const { user } = await signInWithEmailAndPassword(auth, email, password);
-      setCurrentUser(user);
+      console.log("logging in");
+      const { data } = await AuthService.logIn({ email, password });
+      setCurrentUser(jwtDecode(data.accessToken));
     } catch (error: any) {
+      console.error(error);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -55,13 +53,8 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const signup = async (email: string, username: string, password: string) => {
     try {
       setLoading(true);
-      const { user } = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      setCurrentUser(user);
+      const { data } = await AuthService.signUp({ email, username, password });
+      setCurrentUser(jwtDecode(data.accessToken));
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -70,21 +63,11 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
     setCurrentUser(null);
-    signOut(auth);
     setError(null);
+    await AuthService.logOut();
   };
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setCurrentUser(user);
-      }
-    });
-
-    return unsubscribe;
-  }, []);
 
   return (
     <AuthContext.Provider

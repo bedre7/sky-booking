@@ -34,7 +34,6 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 25,
-    fontFamily: appTheme.fontFamily.primary,
     color: appTheme.colors.gray3,
     marginBottom: 30,
     textAlign: "left",

@@ -27,7 +27,7 @@ const SignupForm: FC<SignupFormProps> = ({ onSignup, error, loading }) => {
     password: yup
       .string()
       .required("Password is required")
-      .min(6, "Password must be at least 6 characters"),
+      .min(3, "Password must be at least 3 characters"),
     confirmPassword: yup
       .string()
       .oneOf([yup.ref("password")], "Passwords must match"),
@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     fontSize: 14,
     color: appTheme.colors.gray3,
-    fontFamily: appTheme.fontFamily.primary,
     textAlign: "center",
   },
   error: {

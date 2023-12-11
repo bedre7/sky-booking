@@ -68,7 +68,6 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     marginBottom: 12,
-    fontFamily: appTheme.fontFamily.primary,
     color: appTheme.colors.gray4,
   },
   input: {
@@ -77,7 +76,6 @@ const styles = StyleSheet.create({
     color: appTheme.colors.gray2,
     borderRadius: 5,
     fontSize: 20,
-    fontFamily: appTheme.fontFamily.primary,
   },
   invalidLabel: {
     color: appTheme.colors.orangered,
@@ -94,6 +92,5 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: appTheme.colors.orangered,
     fontSize: 11,
-    fontFamily: appTheme.fontFamily.primary,
   },
 });

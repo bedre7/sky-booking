@@ -26,7 +26,10 @@ export class AuthService {
         },
       });
 
-      return this.signToken(user.id, user.email);
+      return {
+        accessToken: this.signAccessToken({ id: user.id, email: user.email }),
+        refreshToken: this.signRefreshToken({ id: user.id, email: user.email }),
+      };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -53,21 +56,48 @@ export class AuthService {
       throw new ForbiddenException('Invalid credentials');
     }
 
-    return this.signToken(user.id, user.email);
+    return {
+      accessToken: this.signAccessToken({ id: user.id, email: user.email }),
+      refreshToken: this.signRefreshToken({ id: user.id, email: user.email }),
+    };
   }
 
-  async signToken(userId: number, email: string) {
-    const payload = { sub: userId, email };
+  async refresh(refreshToken: string) {
+    try {
+      if (!refreshToken) {
+        throw new ForbiddenException('Invalid token');
+      }
+      console.log(refreshToken);
 
+      const payload = this.jwt.verify(refreshToken, {
+        secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
+      });
+
+      return {
+        accessToken: this.signAccessToken({
+          id: payload.id,
+          email: payload.email,
+        }),
+      };
+    } catch (error) {
+      throw new ForbiddenException('Invalid token');
+    }
+  }
+
+  private signAccessToken(payload: { id: number; email: string }) {
     const signOptions = {
-      expiresIn: '30m',
-      secret: this.configService.get<string>('JWT_SECRET'),
+      expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES_IN'),
+      secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
     };
 
-    const token = await this.jwt.signAsync(payload, signOptions);
+    return this.jwt.sign(payload, signOptions);
+  }
 
-    return {
-      accessToken: token,
+  private signRefreshToken(payload: { id: number; email: string }) {
+    const signOptions = {
+      expiresIn: this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRES_IN'),
+      secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
     };
+    return this.jwt.sign(payload, signOptions);
   }
 }
