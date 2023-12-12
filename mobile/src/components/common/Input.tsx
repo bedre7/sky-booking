@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import appTheme from "../../styles";
 
 type InputProps = {
-  label: string;
+  label?: string;
   onUpdateValue: (value: string) => void;
   value: string;
+  placeholder?: string;
   keyboardType?:
     | "default"
     | "number-pad"
@@ -22,26 +23,41 @@ const Input: React.FC<InputProps> = ({
   onUpdateValue,
   value,
   keyboardType,
+  placeholder,
   secure,
   errorMessage,
 }) => {
   const [isTouched, setIsTouched] = useState<boolean>(false);
+  const [isFocused, setIsFocused] = useState(false);
+
+  const handleFocus = () => {
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+    setIsTouched(true);
+  };
 
   return (
     <View style={styles.container}>
-      <Text
-        style={[
-          styles.label,
-          isTouched && errorMessage ? styles.invalidLabel : null,
-        ]}
-      >
-        {label}
-      </Text>
+      {label && (
+        <Text
+          style={[
+            styles.label,
+            isTouched && errorMessage ? styles.invalidLabel : null,
+          ]}
+        >
+          {label}
+        </Text>
+      )}
 
       <TextInput
-        onBlur={() => setIsTouched(true)}
+        onBlur={handleBlur}
+        onFocus={handleFocus}
         style={[
           styles.input,
+          isFocused && styles.focused,
           isTouched && errorMessage
             ? styles.invalidInput
             : isTouched && styles.valid,
@@ -51,6 +67,8 @@ const Input: React.FC<InputProps> = ({
         secureTextEntry={secure}
         onChangeText={onUpdateValue}
         value={value}
+        placeholder={placeholder}
+        placeholderTextColor={appTheme.colors.gray8}
       />
       {isTouched && errorMessage && (
         <Text style={styles.error}>{errorMessage}</Text>
@@ -64,6 +82,7 @@ export default Input;
 const styles = StyleSheet.create({
   container: {
     marginVertical: 8,
+    width: "100%",
   },
   label: {
     fontSize: 14,
@@ -76,6 +95,7 @@ const styles = StyleSheet.create({
     color: appTheme.colors.gray2,
     borderRadius: 5,
     fontSize: 20,
+    width: "100%",
   },
   invalidLabel: {
     color: appTheme.colors.orangered,
@@ -86,6 +106,10 @@ const styles = StyleSheet.create({
   },
   valid: {
     borderColor: appTheme.colors.green,
+    borderWidth: 1,
+  },
+  focused: {
+    borderColor: appTheme.colors.primary,
     borderWidth: 1,
   },
   error: {

@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { FC } from "react";
+import React from "react";
 import Input from "../common/Input";
 import appTheme from "../../styles";
 import Button from "../common/Button";
@@ -7,14 +7,10 @@ import { AuthStackProps } from "../../navigation/AuthStack";
 import { useNavigation } from "@react-navigation/native";
 import * as yup from "yup";
 import { useFormik } from "formik";
+import { useAuth } from "../../context/Auth";
 
-type LoginFormProps = {
-  onLogin: (email: string, password: string) => void;
-  error: string | null;
-  loading: boolean;
-};
-
-const LoginForm: FC<LoginFormProps> = ({ onLogin, error, loading }) => {
+const LoginForm = () => {
+  const { error, loading, login } = useAuth();
   const navigation = useNavigation<AuthStackProps>();
   const onNavigateToSignup = () => navigation.navigate("Signup");
 
@@ -33,7 +29,7 @@ const LoginForm: FC<LoginFormProps> = ({ onLogin, error, loading }) => {
     },
     validationSchema: validationSchema,
     onSubmit: ({ email, password }) => {
-      onLogin(email, password);
+      login(email, password);
     },
   });
 
@@ -53,7 +49,7 @@ const LoginForm: FC<LoginFormProps> = ({ onLogin, error, loading }) => {
         onUpdateValue={formik.handleChange("password")}
         errorMessage={formik.errors.password}
       />
-      {error && <Text style={styles.error}>{error}</Text>}
+      {<Text style={styles.error}>{error}</Text>}
       <Button
         style={styles.button1}
         onPress={formik.handleSubmit}
@@ -92,7 +88,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   error: {
-    marginTop: 5,
     color: appTheme.colors.orangered,
+    textAlign: "center",
   },
 });

@@ -5,11 +5,11 @@ import { Ionicons } from "@expo/vector-icons";
 import appTheme from "../styles";
 
 const LogoutIcon = () => {
-  const { logOut } = useAuth();
+  const { logout } = useAuth();
 
   return (
     <Pressable
-      onPress={logOut}
+      onPress={logout}
       style={({ pressed }) => pressed && styles.pressed}
     >
       <Ionicons style={styles.icon} name="log-out" size={36} color="white" />

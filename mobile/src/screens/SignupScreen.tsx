@@ -2,16 +2,13 @@ import { View, Text, StyleSheet, Image } from "react-native";
 import React from "react";
 import appTheme from "../styles";
 import SignupForm from "../components/Auth/SignupForm";
-import { useAuth } from "../context/Auth";
 
 const SignupScreen = () => {
-  const { loading, error, signUp } = useAuth();
-
   return (
     <View style={styles.container}>
       <Image style={styles.logo} source={require("../../assets/logo.png")} />
       <Text style={styles.header}>Sign up</Text>
-      <SignupForm onSignup={signUp} error={error} loading={loading} />
+      <SignupForm />
     </View>
   );
 };

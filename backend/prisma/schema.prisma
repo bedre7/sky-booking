@@ -34,6 +34,8 @@ model Route {
   origin      String
   destination String
   flights     Flight[]
+
+  @@unique([origin, destination])
 }
 
 model Flight {
@@ -63,6 +65,7 @@ model User {
   email     String    @unique
   username  String
   password  String
+  isAdmin   Boolean   @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   bookings  Booking[]

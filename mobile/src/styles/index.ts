@@ -28,6 +28,7 @@ const appTheme = {
     gray8: "#2f3136",
     gray7: "#36393f",
     gray6: "#4f545c",
+    gray5: "#b9bbbe",
     gray4: "#d4d7dc",
     gray3: "#e3e5e8",
     gray2: "#ebedef",

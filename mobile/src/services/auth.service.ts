@@ -12,9 +12,9 @@ export interface ILogInBody {
 }
 
 class AuthService {
-  signUp = (body: ISignUpBody) => ApiService.post("/auth/signup", body);
-  logIn = (body: ILogInBody) => ApiService.post("/auth/login", body);
-  logOut = () => ApiService.post("/auth/logout");
+  signup = (body: ISignUpBody) => ApiService.post("/auth/signup", body);
+  login = (body: ILogInBody) => ApiService.post("/auth/login", body);
+  logout = () => ApiService.post("/auth/logout");
   refresh = () => ApiService.post("/auth/refresh");
 }
 

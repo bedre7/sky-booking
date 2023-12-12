@@ -23,7 +23,6 @@ class ApiService {
         return response;
       },
       (error) => {
-        console.log("error", error);
         if (error.response?.data) {
           return Promise.reject(error.response.data);
         }

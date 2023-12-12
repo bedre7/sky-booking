@@ -28,7 +28,7 @@ export class AuthController {
 
       response.send({ accessToken });
     } catch (e) {
-      response.send(e.message);
+      response.status(e.status).json(e);
     }
   }
 
@@ -45,7 +45,7 @@ export class AuthController {
 
       response.json({ accessToken });
     } catch (e) {
-      response.send(e.message);
+      response.status(e.status).json(e);
     }
   }
 
@@ -55,6 +55,7 @@ export class AuthController {
     return this.authService.refresh(refreshToken);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Post('logout')
   logout(@Res() response: Response) {
     response.clearCookie('refreshToken');

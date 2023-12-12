@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { FC } from "react";
+import React from "react";
 import Input from "../common/Input";
 import appTheme from "../../styles";
 import Button from "../common/Button";
@@ -7,16 +7,12 @@ import { AuthStackProps } from "../../navigation/AuthStack";
 import { useNavigation } from "@react-navigation/native";
 import * as yup from "yup";
 import { useFormik } from "formik";
+import { useAuth } from "../../context/Auth";
 
-type SignupFormProps = {
-  onSignup: (email: string, username: string, password: string) => void;
-  error: string | null;
-  loading: boolean;
-};
-
-const SignupForm: FC<SignupFormProps> = ({ onSignup, error, loading }) => {
+const SignupForm = () => {
   const navigation = useNavigation<AuthStackProps>();
   const onNavigateToLogin = () => navigation.navigate("Login");
+  const { error, loading, signup } = useAuth();
 
   const validationSchema = yup.object().shape({
     email: yup
@@ -42,7 +38,7 @@ const SignupForm: FC<SignupFormProps> = ({ onSignup, error, loading }) => {
     },
     validationSchema: validationSchema,
     onSubmit: ({ email, username, password }) => {
-      onSignup(email, username, password);
+      signup(email, username, password);
     },
   });
 
@@ -115,6 +111,7 @@ const styles = StyleSheet.create({
   },
   error: {
     marginTop: 5,
+    textAlign: "center",
     color: appTheme.colors.orangered,
   },
 });

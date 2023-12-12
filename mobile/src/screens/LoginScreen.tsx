@@ -2,16 +2,13 @@ import { View, Text, StyleSheet, Image } from "react-native";
 import React from "react";
 import LoginForm from "../components/Auth/LoginForm";
 import appTheme from "../styles";
-import { useAuth } from "../context/Auth";
 
 const LoginScreen = () => {
-  const { loading, error, logIn } = useAuth();
-
   return (
     <View style={styles.container}>
       <Image style={styles.logo} source={require("../../assets/logo.png")} />
       <Text style={styles.header}>Login</Text>
-      <LoginForm onLogin={logIn} error={error} loading={loading} />
+      <LoginForm />
     </View>
   );
 };

@@ -26,14 +26,13 @@ export class AuthService {
         },
       });
 
-      return {
-        accessToken: this.signAccessToken({ id: user.id, email: user.email }),
-        refreshToken: this.signRefreshToken({ id: user.id, email: user.email }),
-      };
+      return this.sendTokens(user);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
-          throw new ForbiddenException('Username or email already exists');
+          throw new ForbiddenException({
+            message: 'Username or email already exists',
+          });
         }
       }
 
@@ -47,25 +46,28 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new ForbiddenException('Invalid credentials');
+      throw new ForbiddenException({
+        message: 'Invalid credentials',
+      });
     }
 
     const passwordMatches = await argon.verify(user.password, dto.password);
 
     if (!passwordMatches) {
-      throw new ForbiddenException('Invalid credentials');
+      throw new ForbiddenException({
+        message: 'Invalid credentials',
+      });
     }
 
-    return {
-      accessToken: this.signAccessToken({ id: user.id, email: user.email }),
-      refreshToken: this.signRefreshToken({ id: user.id, email: user.email }),
-    };
+    return this.sendTokens(user);
   }
 
   async refresh(refreshToken: string) {
     try {
       if (!refreshToken) {
-        throw new ForbiddenException('Invalid token');
+        throw new ForbiddenException(
+          'No refresh token provided, please login again',
+        );
       }
 
       const payload = this.jwt.verify(refreshToken, {
@@ -76,14 +78,29 @@ export class AuthService {
         accessToken: this.signAccessToken({
           id: payload.id,
           email: payload.email,
+          username: payload.username,
         }),
       };
     } catch (error) {
-      throw new ForbiddenException('Invalid token');
+      throw new ForbiddenException({
+        message: 'Invalid refresh token',
+      });
     }
   }
 
-  private signAccessToken(payload: { id: number; email: string }) {
+  private sendTokens(payload: { id: number; email: string; username: string }) {
+    return {
+      accessToken: this.signAccessToken(payload),
+      refreshToken: this.signRefreshToken(payload),
+    };
+  }
+
+  private signAccessToken(payload: {
+    id: number;
+    email: string;
+    username: string;
+    isAdmin?: boolean;
+  }) {
     const signOptions = {
       expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES_IN'),
       secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
@@ -92,7 +109,12 @@ export class AuthService {
     return this.jwt.sign(payload, signOptions);
   }
 
-  private signRefreshToken(payload: { id: number; email: string }) {
+  private signRefreshToken(payload: {
+    id: number;
+    email: string;
+    username: string;
+    isAdmin?: boolean;
+  }) {
     const signOptions = {
       expiresIn: this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRES_IN'),
       secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),

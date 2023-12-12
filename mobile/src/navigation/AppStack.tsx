@@ -13,8 +13,8 @@ const AppStack = () => {
 
   useEffect(() => {
     if (!hasRefreshed) {
-      refresh();
-      setHasRefreshed(true);
+        setHasRefreshed(true);
+        refresh();
     }
   }, [hasRefreshed]);
 
