@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { LoginDto, SignUpDto } from './dto';
-import * as argon from 'argon2';
+import * as bcrypt from 'bcrypt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -15,7 +15,7 @@ export class AuthService {
   ) {}
 
   async signup(dto: SignUpDto) {
-    const hashedPassword = await argon.hash(dto.password);
+    const hashedPassword = await bcrypt.hash(dto.password, 12);
 
     try {
       const user = await this.primsaService.user.create({
@@ -51,7 +51,7 @@ export class AuthService {
       });
     }
 
-    const passwordMatches = await argon.verify(user.password, dto.password);
+    const passwordMatches = await bcrypt.compare(dto.password, user.password);
 
     if (!passwordMatches) {
       throw new ForbiddenException({
