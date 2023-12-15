@@ -25,6 +25,6 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 10,
-    color: appTheme.colors.accent,
+    color: appTheme.colors.gray5,
   },
 });

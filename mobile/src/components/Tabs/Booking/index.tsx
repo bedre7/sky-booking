@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View, Text } from "react-native";
 import React from "react";
 import appTheme from "../../../styles";
 import FlightItem from "./FlightItem";
@@ -35,6 +35,10 @@ const Booking = () => {
   return (
     <View style={styles.container}>
       <BookingForm />
+      <Text style={styles.title}>
+        * Flights on
+        <Text style={styles.titleBold}> 2023/12/14</Text>
+      </Text>
       <FlatList
         data={flights}
         renderItem={({ item }) => (
@@ -60,5 +64,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: appTheme.colors.gray8,
     overflow: "scroll",
+  },
+  title: {
+    fontSize: 12,
+    color: appTheme.colors.gray5,
+    paddingHorizontal: 20,
+  },
+  titleBold: {
+    fontWeight: "bold",
+    fontSize: 13,
+    color: appTheme.colors.red,
   },
 });

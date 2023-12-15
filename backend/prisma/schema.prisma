@@ -10,11 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model AirPlane {
+model Airplane {
   id            Int      @id @default(autoincrement())
   name          String
   model         String
-  numberOfSeats Int
+  capacity      Int
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   seats         Seat[]
@@ -25,11 +25,11 @@ model Seat {
   id         Int       @id @default(autoincrement())
   seatNumber String
   airPlaneId Int
-  airPlane   AirPlane  @relation(fields: [airPlaneId], references: [id])
+  airplane   Airplane  @relation(fields: [airPlaneId], references: [id])
   bookings   Booking[]
 }
 
-model Route {
+model Routes {
   id          Int      @id @default(autoincrement())
   origin      String
   destination String
@@ -45,8 +45,8 @@ model Flight {
   flightNumber  String
   routeId       Int
   price         Float
-  route         Route     @relation(fields: [routeId], references: [id])
-  airPlane      AirPlane  @relation(fields: [airPlaneId], references: [id])
+  route         Routes     @relation(fields: [routeId], references: [id])
+  airplane      Airplane  @relation(fields: [airPlaneId], references: [id])
   airPlaneId    Int
   bookings      Booking[]
 }

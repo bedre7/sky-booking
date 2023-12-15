@@ -27,7 +27,7 @@ class ApiService {
           return Promise.reject(error.response.data);
         }
         return Promise.reject(error);
-      },
+      }
     );
   }
 
@@ -40,8 +40,6 @@ class ApiService {
   }
 
   post(path: string, data?: any, accessToken?: string) {
-    // console.log("path", path, API_URL);
-    //send request to server with credentials
     return this.axiosInstance.post(path, data, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
