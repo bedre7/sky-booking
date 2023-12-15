@@ -44,6 +44,7 @@ model Flight {
   departureTime String
   flightNumber  String
   routeId       Int
+  price         Float
   route         Route     @relation(fields: [routeId], references: [id])
   airPlane      AirPlane  @relation(fields: [airPlaneId], references: [id])
   airPlaneId    Int

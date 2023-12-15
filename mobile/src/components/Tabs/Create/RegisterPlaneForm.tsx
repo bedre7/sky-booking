@@ -13,11 +13,11 @@ interface RegisterPlaneFormProps {
 }
 
 const RegisterPlaneForm: FC<RegisterPlaneFormProps> = ({ id, onClose }) => {
-  const [numberOfSeats, setNumberOfSeats] = useState("");
-  const seats = [
-    { key: "48", value: "48" },
-    { key: "60", value: "60" },
-    { key: "72", value: "72" },
+  const [capacity, setCapacity] = useState("");
+  const capacityOptions = [
+    { key: "48", value: 48 },
+    { key: "60", value: 60 },
+    { key: "72", value: 72 },
   ];
 
   const validationSchema = yup.object().shape({
@@ -32,7 +32,7 @@ const RegisterPlaneForm: FC<RegisterPlaneFormProps> = ({ id, onClose }) => {
     },
     validationSchema,
     onSubmit: ({ name, model }) => {
-      Alert.alert(name + model + numberOfSeats);
+      Alert.alert(name + model + capacity);
     },
   });
 
@@ -57,10 +57,10 @@ const RegisterPlaneForm: FC<RegisterPlaneFormProps> = ({ id, onClose }) => {
           dropdownTextStyles={styles.dropdown}
           dropdownStyles={styles.dropdown}
           search={false}
-          data={seats}
-          setSelected={setNumberOfSeats}
+          data={capacityOptions}
+          setSelected={setCapacity}
           save="value"
-          placeholder="Number of Seats"
+          placeholder="Set Capacity"
           boxStyles={styles.dropdown}
         />
       </View>

@@ -6,11 +6,57 @@ import Input from "../../common/Input";
 import Button from "../../common/Button";
 import appTheme from "../../../styles";
 import DatePicker from "react-native-modern-datepicker";
+import { SelectList } from "react-native-dropdown-select-list";
 
 interface CreateFlightFormProps {
   id: string;
   onClose: (id: string) => void;
 }
+
+const routes = [
+  {
+    id: 1,
+    origin: "JFK",
+    destination: "LAX",
+  },
+  {
+    id: 2,
+    origin: "LAX",
+    destination: "JFK",
+  },
+  {
+    id: 3,
+    origin: "LAX",
+    destination: "SFO",
+  },
+];
+const routesDropdown = routes.map((route) => ({
+  key: route.id,
+  value: `${route.origin} - ${route.destination}`,
+}));
+
+const airplanes = [
+  {
+    id: 1,
+    model: "Boeing 737",
+    capacity: 48,
+  },
+  {
+    id: 2,
+    model: "Boeing 747",
+    capacity: 60,
+  },
+  {
+    id: 3,
+    model: "Boeing 757",
+    capacity: 72,
+  },
+];
+
+const airplanesDropdown = airplanes.map((airplane) => ({
+  key: airplane.id,
+  value: `${airplane.model} - ${airplane.capacity}`,
+}));
 
 const CreateFlightForm: FC<CreateFlightFormProps> = ({ id, onClose }) => {
   const [showCalendar, setShowCalendar] = useState({
@@ -19,18 +65,24 @@ const CreateFlightForm: FC<CreateFlightFormProps> = ({ id, onClose }) => {
   });
   const [departureTime, setDepartureTime] = useState("");
   const [arrivalTime, setArrivalTime] = useState("");
+  const [route, setRoute] = useState();
+  const [airplane, setAirplane] = useState();
 
   const validationSchema = yup.object().shape({
     flightNumber: yup.string().required("Flight Number is required"),
+    price: yup.number().required("Price is required"),
   });
 
   const formik = useFormik({
     initialValues: {
       flightNumber: "",
+      price: "",
     },
     validationSchema,
-    onSubmit: ({ flightNumber }) => {
-      Alert.alert(flightNumber + departureTime + arrivalTime);
+    onSubmit: ({ flightNumber, price }) => {
+      Alert.alert(
+        flightNumber + price + departureTime + arrivalTime + route + airplane
+      );
     },
   });
 
@@ -44,7 +96,16 @@ const CreateFlightForm: FC<CreateFlightFormProps> = ({ id, onClose }) => {
           onUpdateValue={formik.handleChange("flightNumber")}
           errorMessage={formik.errors.flightNumber}
         />
+        <Input
+          placeholder="Price"
+          value={formik.values.price.toString()}
+          onUpdateValue={(value) => {
+            formik.setFieldValue("price", parseInt(value) || 0);
+          }}
+          errorMessage={formik.errors.price}
+        />
         <Button
+          style={{ marginTop: 10 }}
           onPress={() =>
             setShowCalendar({
               ...showCalendar,
@@ -52,18 +113,7 @@ const CreateFlightForm: FC<CreateFlightFormProps> = ({ id, onClose }) => {
             })
           }
         >
-          Set Departure Time
-        </Button>
-        <Button
-          style={{ marginTop: 5, backgroundColor: appTheme.colors.gray6 }}
-          onPress={() =>
-            setShowCalendar({
-              ...showCalendar,
-              arrivalTime: !showCalendar.arrivalTime,
-            })
-          }
-        >
-          Set Arrival Time
+          {showCalendar.departureTime ? "Hide" : "Set Departure Time"}
         </Button>
         {showCalendar.departureTime && (
           <DatePicker
@@ -80,6 +130,17 @@ const CreateFlightForm: FC<CreateFlightFormProps> = ({ id, onClose }) => {
             onSelectedChange={(date) => setDepartureTime(date)}
           />
         )}
+        <Button
+          style={{ marginTop: 10, backgroundColor: appTheme.colors.gray6 }}
+          onPress={() =>
+            setShowCalendar({
+              ...showCalendar,
+              arrivalTime: !showCalendar.arrivalTime,
+            })
+          }
+        >
+          {showCalendar.arrivalTime ? "Hide" : "Set Arrival Time"}
+        </Button>
         {showCalendar.arrivalTime && (
           <DatePicker
             minimumDate={new Date().toISOString()}
@@ -95,6 +156,28 @@ const CreateFlightForm: FC<CreateFlightFormProps> = ({ id, onClose }) => {
             onSelectedChange={(date) => setArrivalTime(date)}
           />
         )}
+        <SelectList
+          inputStyles={styles.dropdown}
+          dropdownTextStyles={styles.dropdown}
+          dropdownStyles={styles.dropdown}
+          search={false}
+          data={routesDropdown}
+          setSelected={setRoute}
+          save="key"
+          placeholder="Select Route"
+          boxStyles={styles.dropdown}
+        />
+        <SelectList
+          inputStyles={styles.dropdown}
+          dropdownTextStyles={styles.dropdown}
+          dropdownStyles={styles.dropdown}
+          search={false}
+          data={airplanesDropdown}
+          setSelected={setAirplane}
+          save="key"
+          placeholder="Select Airplane"
+          boxStyles={styles.dropdown}
+        />
       </View>
       <View style={styles.buttonContainer}>
         <Button style={styles.saveButton} onPress={formik.handleSubmit}>
@@ -113,14 +196,13 @@ export default CreateFlightForm;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 80,
+    gap: 10,
     paddingHorizontal: 20,
-    gap: 15,
     justifyContent: "space-between",
   },
   form: {
     flex: 1,
-    gap: 8,
+    gap: 4,
   },
   header: {
     fontSize: 24,
@@ -131,8 +213,9 @@ const styles = StyleSheet.create({
     backgroundColor: appTheme.colors.gray8,
   },
   dropdown: {
-    marginTop: 4,
+    marginTop: 10,
     backgroundColor: appTheme.colors.gray6,
+    borderColor: appTheme.colors.gray6,
     color: appTheme.colors.gray2,
   },
   saveButton: {

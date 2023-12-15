@@ -3,13 +3,12 @@ import {
   BottomTabNavigationProp,
   createBottomTabNavigator,
 } from "@react-navigation/bottom-tabs";
-import { Booking, Flights, Tickets, Create, Profile } from "../components/Tabs";
+import { Booking, Tickets, Create, Profile } from "../components/Tabs";
 import appTheme from "../styles";
 import { Ionicons } from "@expo/vector-icons";
 import LogoutIcon from "../components/LogoutIcon";
 
 export type BottomStackParamList = {
-  Flights: undefined;
   Create: undefined;
   Profile: undefined;
   Booking: undefined;
@@ -31,14 +30,14 @@ const HomeStack = () => {
       }}
     >
       <BottomTab.Screen
-        name="Flights"
-        component={Flights}
+        name="Booking"
+        component={Booking}
         options={{
           headerTitleStyle: {
             fontSize: 20,
           },
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="airplane" size={size} color={color} />
+            <Ionicons name="search" size={size} color={color} />
           ),
         }}
       />
@@ -51,18 +50,6 @@ const HomeStack = () => {
           },
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="add-circle" size={size} color={color} />
-          ),
-        }}
-      />
-      <BottomTab.Screen
-        name="Booking"
-        component={Booking}
-        options={{
-          headerTitleStyle: {
-            fontSize: 20,
-          },
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="search" size={size} color={color} />
           ),
         }}
       />
