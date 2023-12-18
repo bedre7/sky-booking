@@ -13,6 +13,11 @@ interface IFlightManagementContext {
   loading: boolean;
   error: string | null;
   createRoute: (origin: string, destination: string) => Promise<IRoute>;
+  registerPlane: (
+    name: string,
+    model: string,
+    capacity: number
+  ) => Promise<void>;
   fetchRoutes: () => void;
 }
 
@@ -20,6 +25,7 @@ export const FlightManagementContext = createContext<IFlightManagementContext>({
   loading: false,
   error: null,
   createRoute: () => new Promise(() => {}),
+  registerPlane: () => new Promise(() => {}),
   fetchRoutes: () => {},
 } as IFlightManagementContext);
 
@@ -71,9 +77,34 @@ const FlightManagementProvider: FC<{ children: ReactNode }> = ({
     }
   };
 
+  const registerPlane = (name: string, model: string, capacity: number) => {
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        setLoading(true);
+        setError(null);
+        await ApiService.post(
+          "airplane/create",
+          {
+            name,
+            model,
+            capacity,
+          },
+          accessToken
+        );
+        resolve();
+        
+      } catch (error: any) {
+        setError(error.message);
+        reject(error);
+      } finally {
+        setLoading(false);
+      }
+    });
+  };
+
   return (
     <FlightManagementContext.Provider
-      value={{ loading, error, createRoute, fetchRoutes }}
+      value={{ loading, error, createRoute, registerPlane, fetchRoutes }}
     >
       {children}
     </FlightManagementContext.Provider>

@@ -7,6 +7,12 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import appTheme from "../../../styles";
 import Button from "../../common/Button";
 import { useFlightManagement } from "../../../context/flight-management";
+import {
+  ALERT_TYPE,
+  Dialog,
+  AlertNotificationRoot,
+  Toast,
+} from "react-native-alert-notification";
 
 interface AddRouteFormProps {
   id: string;
@@ -14,7 +20,7 @@ interface AddRouteFormProps {
 }
 
 const AddRouteForm: FC<AddRouteFormProps> = ({ id, onClose }) => {
-  const { loading, error, createRoute } = useFlightManagement();
+  const { loading, createRoute } = useFlightManagement();
 
   const validationSchema = yup.object().shape({
     origin: yup.string().required("Origin is required"),
@@ -28,59 +34,74 @@ const AddRouteForm: FC<AddRouteFormProps> = ({ id, onClose }) => {
     },
     validationSchema,
     onSubmit: ({ origin, destination }) => {
-      createRoute(origin, destination).then((route) => {
-        if (route) {
-          onClose(id);
-        }
-      });
+      createRoute(origin, destination)
+        .then((route) => {
+          Dialog.show({
+            type: ALERT_TYPE.SUCCESS,
+            title: "Success",
+            textBody: `Route ${route.origin} - ${route.destination} has been created`,
+            button: "Close",
+            onHide: () => {
+              onClose(id);
+            },
+          });
+        })
+        .catch((error) => {
+          Toast.show({
+            type: ALERT_TYPE.WARNING,
+            title: "Warning",
+            textBody: error.message,
+          });
+        });
     },
   });
 
   return (
-    <View style={styles.container}>
-      <View>
-        <Text style={styles.header}>Add Route</Text>
-        <View style={styles.inputGroup}>
-          <FontAwesome5
-            name="map-marker"
-            size={24}
-            color={appTheme.colors.primary}
-          />
-          <Input
-            placeholder="Origin"
-            value={formik.values.origin}
-            onUpdateValue={formik.handleChange("origin")}
-            errorMessage={formik.errors.origin}
-          />
+    <AlertNotificationRoot theme="dark">
+      <View style={styles.container}>
+        <View>
+          <Text style={styles.header}>Add Route</Text>
+          <View style={styles.inputGroup}>
+            <FontAwesome5
+              name="map-marker"
+              size={24}
+              color={appTheme.colors.primary}
+            />
+            <Input
+              placeholder="Origin"
+              value={formik.values.origin}
+              onUpdateValue={formik.handleChange("origin")}
+              errorMessage={formik.errors.origin}
+            />
+          </View>
+          <View style={styles.inputGroup}>
+            <FontAwesome5
+              name="flag-checkered"
+              size={18}
+              color={appTheme.colors.primary}
+            />
+            <Input
+              placeholder="Destination"
+              value={formik.values.destination}
+              onUpdateValue={formik.handleChange("destination")}
+              errorMessage={formik.errors.destination}
+            />
+          </View>
         </View>
-        <View style={styles.inputGroup}>
-          <FontAwesome5
-            name="flag-checkered"
-            size={18}
-            color={appTheme.colors.primary}
-          />
-          <Input
-            placeholder="Destination"
-            value={formik.values.destination}
-            onUpdateValue={formik.handleChange("destination")}
-            errorMessage={formik.errors.destination}
-          />
+        <View style={styles.buttonContainer}>
+          <Button
+            onPress={formik.handleSubmit}
+            style={styles.saveButton}
+            loading={loading}
+          >
+            Save
+          </Button>
+          <Button onPress={() => onClose(id)} style={styles.cancelButton}>
+            Cancel
+          </Button>
         </View>
-        {error && <Text style={styles.error}>{error}</Text>}
       </View>
-      <View style={styles.buttonContainer}>
-        <Button
-          onPress={formik.handleSubmit}
-          style={styles.saveButton}
-          loading={loading}
-        >
-          Save
-        </Button>
-        <Button onPress={() => onClose(id)} style={styles.cancelButton}>
-          Cancel
-        </Button>
-      </View>
-    </View>
+    </AlertNotificationRoot>
   );
 };
 
@@ -124,12 +145,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     paddingBottom: 12,
-  },
-  error: {
-    color: appTheme.colors.red,
-    textAlign: "center",
-    fontSize: 16,
-    fontWeight: "500",
-    marginTop: 10,
   },
 });
