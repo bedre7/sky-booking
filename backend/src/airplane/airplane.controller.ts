@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guard';
@@ -23,8 +24,17 @@ export class AirplaneController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @Get('available')
+  async getAvailable(
+    @Query() query: { departureTime: string; arrivalTime: string },
+  ) {
+    const { departureTime, arrivalTime } = query;
+    return this.airplaneService.getAvailable(departureTime, arrivalTime);
+  }
+
+  @HttpCode(HttpStatus.OK)
   @Get()
-  async getAllAirplanes() {
-    return this.airplaneService.getAllAirplanes();
+  async getAll() {
+    return this.airplaneService.getAll();
   }
 }

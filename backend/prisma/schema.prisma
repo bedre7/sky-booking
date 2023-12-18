@@ -24,7 +24,7 @@ model Airplane {
 model Seat {
   id                          Int       @id @default(autoincrement())
   seatNumber                  String
-  airplaneId                  Int       @map("airPlaneId")
+  airplaneId                  Int
   airplane                    Airplane  @relation(fields: [airplaneId], references: [id])
   bookings                    Booking[]
 }
@@ -40,14 +40,14 @@ model Routes {
 
 model Flight {
   id                          Int       @id @default(autoincrement())
-  arrivalTime                 String
-  departureTime               String
+  arrivalTime                 DateTime
+  departureTime               DateTime
   flightNumber                String
   routeId                     Int
   price                       Float
   route                       Routes    @relation(fields: [routeId], references: [id])
-  airplane                    Airplane  @relation(fields: [airPlaneId], references: [id])
-  airPlaneId                  Int
+  airplane                    Airplane  @relation(fields: [airplaneId], references: [id])
+  airplaneId                  Int
   bookings                    Booking[]
 }
 

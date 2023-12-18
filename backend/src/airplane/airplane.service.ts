@@ -2,9 +2,41 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateAirplaneDto } from './dto/airplane.dto';
 
+const airplaneSelect = {
+  id: true,
+  name: true,
+  model: true,
+  capacity: true,
+  createdAt: false,
+  updatedAt: false,
+};
 @Injectable()
 export class AirplaneService {
   constructor(private prismaService: PrismaService) {}
+
+  async getAll() {
+    return this.prismaService.airplane.findMany({
+      select: airplaneSelect,
+    });
+  }
+
+  async getAvailable(departureTime: string, arrivalTime: string) {
+    return this.prismaService.airplane.findMany({
+      where: {
+        flights: {
+          none: {
+            departureTime: {
+              lt: new Date(departureTime),
+            },
+            arrivalTime: {
+              gt: new Date(arrivalTime),
+            },
+          },
+        },
+      },
+      select: airplaneSelect,
+    });
+  }
 
   async create(dto: CreateAirplaneDto) {
     const airplane = await this.prismaService.airplane.create({
@@ -40,9 +72,5 @@ export class AirplaneService {
     }
 
     return seatNumbers;
-  }
-
-  async getAllAirplanes() {
-    return this.prismaService.airplane.findMany();
   }
 }

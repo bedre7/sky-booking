@@ -31,11 +31,12 @@ class ApiService {
     );
   }
 
-  get(path: string, accessToken?: string) {
+  get(path: string, accessToken?: string, params?: any) {
     return this.axiosInstance.get(path, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
+      params,
     });
   }
 
