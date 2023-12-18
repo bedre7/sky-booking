@@ -7,6 +7,8 @@ import {
   UseGuards,
   Query,
   Get,
+  ParseIntPipe,
+  Param,
 } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guard';
 import { FlightService } from './flight.service';
@@ -21,6 +23,12 @@ export class FlightController {
   @Get()
   async getAll() {
     return this.flightService.getAll();
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('/:id')
+  async getDetails(@Param('id', ParseIntPipe) flightId: number) {
+    return this.flightService.getDetails(flightId);
   }
 
   @HttpCode(HttpStatus.CREATED)

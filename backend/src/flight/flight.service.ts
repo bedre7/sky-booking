@@ -39,6 +39,44 @@ export class FlightService {
     });
   }
 
+  async getDetails(flightId: number) {
+    const flight = await this.prismaService.flight.findUnique({
+      where: {
+        id: flightId,
+      },
+      select: { ...flightSelect, airplaneId: true },
+    });
+
+    const bookedSeats = new Set(
+      await this.prismaService.booking.findMany({
+        where: {
+          flightId,
+        },
+        select: {
+          seatId: true,
+        },
+      }),
+    );
+
+    const allSeats = await this.prismaService.seat.findMany({
+      where: {
+        airplaneId: flight.airplaneId,
+      },
+    });
+
+    const seatsStatus = allSeats.map((seat) => {
+      return {
+        ...seat,
+        isAvaliable: !bookedSeats.has({ seatId: seat.id }),
+      };
+    });
+
+    return {
+      ...flight,
+      seats: seatsStatus,
+    };
+  }
+
   async filter(origin: string, destination: string, departure: string) {
     return this.prismaService.flight.findMany({
       where: {

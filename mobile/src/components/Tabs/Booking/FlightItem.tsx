@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { FC } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { FC, useState } from "react";
 import appTheme from "../../../styles";
 import { Ionicons } from "@expo/vector-icons";
 import { getDuration } from "../../../utils";
 import { Entypo } from "@expo/vector-icons";
+import BookingForm from "./BookingForm";
 interface FlightItemProps {
   id: number;
   origin: string;
@@ -15,9 +16,20 @@ interface FlightItemProps {
 
 const FlightItem: FC<FlightItemProps> = (props) => {
   const duration = getDuration(props.departure, props.arrival);
+  const [showBookingForm, setShowBookingForm] = useState(false);
 
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => setShowBookingForm(true)}
+    >
+      <BookingForm
+        // flightId={props.id}
+        flightId={1}
+        visible={false}
+        onClose={() => setShowBookingForm(false)}
+        onSubmit={() => setShowBookingForm(false)}
+      />
       <View style={styles.main}>
         <View style={styles.row}>
           <Text style={styles.text}>{props.origin}</Text>
@@ -48,7 +60,7 @@ const FlightItem: FC<FlightItemProps> = (props) => {
           <Text style={styles.priceText}>${props.price}</Text>
         </View>
       )}
-    </View>
+    </TouchableOpacity>
   );
 };
 

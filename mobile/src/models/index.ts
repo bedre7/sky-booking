@@ -11,6 +11,13 @@ export interface IAirplane {
   capacity: number;
 }
 
+export interface ISeat {
+  id: number;
+  seatNumber: number;
+  airplaneId: number;
+  isAvaliable: boolean;
+}
+
 export interface IFlight {
   id: number;
   departureTime: string;
@@ -20,4 +27,9 @@ export interface IFlight {
     origin: string;
     destination: string;
   };
+}
+
+export interface IFlightDetails extends IFlight {
+  airplaneId: number;
+  seats: ISeat[];
 }
