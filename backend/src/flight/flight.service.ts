@@ -43,8 +43,14 @@ export class FlightService {
     return this.prismaService.flight.findMany({
       where: {
         route: {
-          origin,
-          destination,
+          origin: {
+            contains: origin,
+            mode: 'insensitive',
+          },
+          destination: {
+            contains: destination,
+            mode: 'insensitive',
+          },
         },
         departureTime: {
           gte: new Date(departure),

@@ -60,14 +60,6 @@ const CreateFlightForm: FC<CreateFlightFormProps> = ({ id, onClose }) => {
     },
     validationSchema,
     onSubmit: ({ flightNumber, price }) => {
-      console.log({
-        departureTime,
-        arrivalTime,
-        flightNumber,
-        price,
-        route,
-        airplane,
-      });
       createFlight(
         departureTime,
         arrivalTime,

@@ -13,9 +13,11 @@ export interface IAirplane {
 
 export interface IFlight {
   id: number;
-  origin: string;
-  destination: string;
   departureTime: string;
   arrivalTime: string;
   price?: number;
+  route: {
+    origin: string;
+    destination: string;
+  };
 }

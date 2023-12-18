@@ -30,13 +30,13 @@ const FlightItem: FC<FlightItemProps> = (props) => {
           <Text style={styles.text}>{props.destination}</Text>
         </View>
         <View style={styles.timeContainer}>
-          <Text style={styles.time}>{props.departure.substring(10)}</Text>
+          <Text style={styles.time}>{props.departure.substring(11, 16)}</Text>
           <Ionicons
             name="airplane-outline"
             size={16}
             color={appTheme.colors.gray5}
           />
-          <Text style={styles.time}>{props.arrival.substring(10)}</Text>
+          <Text style={styles.time}>{props.arrival.substring(11, 16)}</Text>
         </View>
         <View style={styles.duration}>
           <Ionicons name="time-outline" size={16} color={appTheme.colors.red} />

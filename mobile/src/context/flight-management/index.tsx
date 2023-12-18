@@ -24,6 +24,11 @@ interface IFlightManagementContext {
   ) => Promise<void>;
   fetchRoutes: () => void;
   fetchFlights: () => void;
+  filterFlights: (
+    origin: string,
+    destination: string,
+    departure: string
+  ) => void;
   getAvailablePlanes: (departureTime: string, arrivalTime: string) => void;
   createFlight: (
     departureTime: string,
@@ -46,6 +51,7 @@ export const FlightManagementContext = createContext<IFlightManagementContext>({
   createFlight: () => new Promise(() => {}),
   fetchRoutes: () => {},
   fetchFlights: () => {},
+  filterFlights: () => {},
   getAvailablePlanes: () => {},
 } as IFlightManagementContext);
 
@@ -60,30 +66,6 @@ const FlightManagementProvider: FC<{ children: ReactNode }> = ({
   const [routes, setRoutes] = useState<IRoute[]>([]);
   const [airplanes, setAirplanes] = useState<IAirplane[]>([]);
   const [flights, setFlights] = useState<IFlight[]>([]);
-
-  const createRoute = (origin: string, destination: string) => {
-    return new Promise<IRoute>(async (resolve, reject) => {
-      try {
-        setLoading(true);
-        setError(null);
-        const { data } = await ApiService.post(
-          "routes/create",
-          {
-            origin,
-            destination,
-          },
-          accessToken
-        );
-        setRoutes([...routes, data]);
-        resolve(data);
-      } catch (error: any) {
-        setError(error.message);
-        reject(error);
-      } finally {
-        setLoading(false);
-      }
-    });
-  };
 
   const fetchRoutes = async () => {
     try {
@@ -111,6 +93,70 @@ const FlightManagementProvider: FC<{ children: ReactNode }> = ({
     }
   };
 
+  const getAvailablePlanes = async (
+    departureTime: string,
+    arrivalTime: string
+  ) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const { data } = await ApiService.get("airplane/available", accessToken, {
+        departureTime,
+        arrivalTime,
+      });
+      setAirplanes(data);
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filterFlights = async (
+    origin: string,
+    destination: string,
+    departure: string
+  ) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const { data } = await ApiService.get("flight/filter", accessToken, {
+        origin,
+        destination,
+        departure,
+      });
+      setFlights(data);
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createRoute = (origin: string, destination: string) => {
+    return new Promise<IRoute>(async (resolve, reject) => {
+      try {
+        setLoading(true);
+        setError(null);
+        const { data } = await ApiService.post(
+          "routes/create",
+          {
+            origin,
+            destination,
+          },
+          accessToken
+        );
+        setRoutes([...routes, data]);
+        resolve(data);
+      } catch (error: any) {
+        setError(error.message);
+        reject(error);
+      } finally {
+        setLoading(false);
+      }
+    });
+  };
+
   const registerPlane = (name: string, model: string, capacity: number) => {
     return new Promise<void>(async (resolve, reject) => {
       try {
@@ -133,25 +179,6 @@ const FlightManagementProvider: FC<{ children: ReactNode }> = ({
         setLoading(false);
       }
     });
-  };
-
-  const getAvailablePlanes = async (
-    departureTime: string,
-    arrivalTime: string
-  ) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const { data } = await ApiService.get("airplane/available", accessToken, {
-        departureTime,
-        arrivalTime,
-      });
-      setAirplanes(data);
-    } catch (error: any) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const createFlight = async (
@@ -202,6 +229,7 @@ const FlightManagementProvider: FC<{ children: ReactNode }> = ({
         registerPlane,
         fetchRoutes,
         fetchFlights,
+        filterFlights,
         createFlight,
       }}
     >

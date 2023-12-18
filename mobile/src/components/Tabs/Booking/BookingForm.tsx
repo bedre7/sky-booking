@@ -1,5 +1,5 @@
-import { StyleSheet, View } from "react-native";
-import React, { useState } from "react";
+import { Alert, StyleSheet, View, Text } from "react-native";
+import React, { useEffect, useState } from "react";
 import appTheme from "../../../styles";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -7,10 +7,12 @@ import Input from "../../common/Input";
 import Button from "../../common/Button";
 import DatePicker from "react-native-modern-datepicker";
 import { FontAwesome5, AntDesign, Feather } from "@expo/vector-icons";
+import { useFlightManagement } from "../../../context/flight-management";
 
 const BookingForm = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [departureDate, setDepartureDate] = useState("");
+  const { filterFlights } = useFlightManagement();
 
   const validationSchema = Yup.object().shape({
     from: Yup.string().required("From is required"),
@@ -21,13 +23,18 @@ const BookingForm = () => {
     initialValues: {
       from: "",
       to: "",
-      date: "",
     },
     onSubmit: (values) => {
-      console.log(values);
+      filterFlights(values.from, values.to, departureDate);
     },
     validationSchema,
   });
+
+  useEffect(() => {
+    if (formik.values.from && formik.values.to && departureDate) {
+      formik.handleSubmit();
+    }
+  }, [formik.values.from, formik.values.to, departureDate]);
 
   return (
     <View style={styles.container}>
@@ -94,6 +101,12 @@ const BookingForm = () => {
           onSelectedChange={(date) => setDepartureDate(date)}
         />
       )}
+      {departureDate && (
+        <Text style={styles.title}>
+          * Flights on
+          <Text style={styles.titleBold}> {departureDate}</Text>
+        </Text>
+      )}
     </View>
   );
 };
@@ -131,5 +144,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 10,
     marginLeft: 10,
+  },
+  title: {
+    fontSize: 12,
+    color: appTheme.colors.gray5,
+    paddingHorizontal: 20,
+  },
+  titleBold: {
+    fontWeight: "bold",
+    fontSize: 13,
+    color: appTheme.colors.red,
   },
 });
