@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React, { FC, useEffect, useState } from "react";
 import * as yup from "yup";
 import { useFormik } from "formik";

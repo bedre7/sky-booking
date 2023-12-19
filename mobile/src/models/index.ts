@@ -13,7 +13,7 @@ export interface IAirplane {
 
 export interface ISeat {
   id: number;
-  seatNumber: number;
+  seatNumber: string;
   airplaneId: number;
   isAvaliable: boolean;
 }

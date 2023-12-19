@@ -7,6 +7,7 @@ import { Booking, Tickets, Create, Profile } from "../components/Tabs";
 import appTheme from "../styles";
 import { Ionicons } from "@expo/vector-icons";
 import LogoutIcon from "../components/LogoutIcon";
+import BookingStackScreen from "../components/Tabs/Booking/BookingStack";
 
 export type BottomStackParamList = {
   Create: undefined;
@@ -31,7 +32,7 @@ const HomeStack = () => {
     >
       <BottomTab.Screen
         name="Booking"
-        component={Booking}
+        component={BookingStackScreen}
         options={{
           headerTitleStyle: {
             fontSize: 20,
