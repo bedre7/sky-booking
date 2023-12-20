@@ -1,43 +1,39 @@
-import { FlatList, StyleSheet, View } from "react-native";
-import React from "react";
+import { FlatList, StyleSheet, View, Text } from "react-native";
+import React, { useEffect } from "react";
 import TicketItem from "./TicketItem";
 import appTheme from "../../../styles";
-
-const tickets = [
-  {
-    id: 1,
-    origin: "Hanoi",
-    destination: "Ho Chi Minh",
-    departureTime: "2021-05-25T10:00:00.000Z",
-    arrivalTime: "2021-05-25T11:00:00.000Z",
-    seatNumber: "A01",
-  },
-  {
-    id: 2,
-    origin: "Hanoi",
-    destination: "Ho Chi Minh",
-    departureTime: "2021-05-25T10:00:00.000Z",
-    arrivalTime: "2021-05-25T11:00:00.000Z",
-    seatNumber: "A01",
-  },
-  {
-    id: 3,
-    origin: "Hanoi",
-    destination: "Ho Chi Minh",
-    departureTime: "2021-05-25T10:00:00.000Z",
-    arrivalTime: "2021-05-25T11:00:00.000Z",
-    seatNumber: "A01",
-  },
-];
+import { useFlightManagement } from "../../../context/flight-management";
+import { Ionicons } from "@expo/vector-icons";
 
 const Tickets = () => {
+  const { tickets, fetchTickets } = useFlightManagement();
+
+  useEffect(() => {
+    fetchTickets();
+  }, []);
+
   return (
     <View style={styles.container}>
-      <FlatList
-        data={tickets}
-        renderItem={({ item }) => <TicketItem {...item} />}
-        keyExtractor={(item) => item.id.toString()}
-      />
+      {tickets.length > 0 ? (
+        <FlatList
+          data={tickets}
+          renderItem={({ item }) => <TicketItem {...item} />}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      ) : (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Ionicons
+            name="ios-sad-outline"
+            size={32}
+            color={appTheme.colors.gray5}
+          />
+          <Text style={{ fontSize: 18, color: appTheme.colors.gray5 }}>
+            No flights available
+          </Text>
+        </View>
+      )}
     </View>
   );
 };

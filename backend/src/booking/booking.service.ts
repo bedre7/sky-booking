@@ -5,6 +5,33 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class BookingService {
   constructor(private prismaService: PrismaService) {}
 
+  async getByUserId(userId: number) {
+    const bookings = await this.prismaService.booking.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        flight: {
+          include: {
+            route: true,
+          },
+        },
+        seat: true,
+      },
+    });
+
+    return bookings.map((booking) => {
+      return {
+        id: booking.id,
+        origin: booking.flight.route.origin,
+        destination: booking.flight.route.destination,
+        departureTime: booking.flight.departureTime,
+        arrivalTime: booking.flight.arrivalTime,
+        seatNumber: booking.seat.seatNumber,
+      };
+    });
+  }
+
   async create(flightId: number, seatId: number, userId: number) {
     const flightExists = await this.prismaService.flight.findFirst({
       where: {
@@ -43,7 +70,7 @@ export class BookingService {
       });
     }
 
-    return this.prismaService.booking.create({
+    await this.prismaService.booking.create({
       data: {
         user: {
           connect: {
@@ -62,5 +89,34 @@ export class BookingService {
         },
       },
     });
+
+    return this.getTicket(userId, seatId, flightId);
+  }
+
+  private async getTicket(userId: number, seatId: number, flightId: number) {
+    const ticket = await this.prismaService.booking.findFirst({
+      where: {
+        userId,
+        seatId,
+        flightId,
+      },
+      include: {
+        flight: {
+          include: {
+            route: true,
+          },
+        },
+        seat: true,
+      },
+    });
+
+    return {
+      id: ticket.id,
+      origin: ticket.flight.route.origin,
+      destination: ticket.flight.route.destination,
+      departureTime: ticket.flight.departureTime,
+      arrivalTime: ticket.flight.arrivalTime,
+      seatNumber: ticket.seat.seatNumber,
+    };
   }
 }

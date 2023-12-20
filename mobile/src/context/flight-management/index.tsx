@@ -5,7 +5,13 @@ import React, {
   useContext,
   useState,
 } from "react";
-import { IAirplane, IFlight, IFlightDetails, IRoute } from "../../models";
+import {
+  IAirplane,
+  IFlight,
+  IFlightDetails,
+  IRoute,
+  ITicket,
+} from "../../models";
 import ApiService from "../../api";
 import { useAuth } from "../Auth";
 
@@ -13,6 +19,7 @@ interface IFlightManagementContext {
   loading: boolean;
   error: string | null;
   routes: IRoute[];
+  tickets: ITicket[];
   airplanes: IAirplane[];
   flights: IFlight[];
   selectedFlight: IFlightDetails | null;
@@ -24,6 +31,7 @@ interface IFlightManagementContext {
   ) => Promise<void>;
   fetchRoutes: () => void;
   fetchFlights: () => void;
+  fetchTickets: () => void;
   fetchFlightDetails: (flightId: number) => void;
   filterFlights: (
     origin: string,
@@ -46,6 +54,7 @@ export const FlightManagementContext = createContext<IFlightManagementContext>({
   loading: false,
   error: null,
   routes: [],
+  tickets: [],
   airplanes: [],
   flights: [],
   selectedFlight: null,
@@ -54,6 +63,7 @@ export const FlightManagementContext = createContext<IFlightManagementContext>({
   createFlight: () => new Promise(() => {}),
   createReservation: () => new Promise(() => {}),
   fetchRoutes: () => {},
+  fetchTickets: () => {},
   fetchFlights: () => {},
   fetchFlightDetails: () => {},
   filterFlights: () => {},
@@ -69,6 +79,7 @@ const FlightManagementProvider: FC<{ children: ReactNode }> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [routes, setRoutes] = useState<IRoute[]>([]);
+  const [tickets, setTickets] = useState<ITicket[]>([]);
   const [airplanes, setAirplanes] = useState<IAirplane[]>([]);
   const [flights, setFlights] = useState<IFlight[]>([]);
   const [selectedFlight, setSelectedFlight] = useState<IFlightDetails | null>(
@@ -94,6 +105,19 @@ const FlightManagementProvider: FC<{ children: ReactNode }> = ({
       setError(null);
       const { data } = await ApiService.get("flight/", accessToken);
       setFlights(data);
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchTickets = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const { data } = await ApiService.get("booking/", accessToken);
+      setTickets(data);
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -183,7 +207,7 @@ const FlightManagementProvider: FC<{ children: ReactNode }> = ({
       try {
         setLoading(true);
         setError(null);
-        await ApiService.post(
+        const { data } = await ApiService.post(
           "booking/create",
           {
             flightId,
@@ -191,6 +215,7 @@ const FlightManagementProvider: FC<{ children: ReactNode }> = ({
           },
           accessToken
         );
+        setTickets([...tickets, data]);
         resolve();
       } catch (error: any) {
         setError(error.message);
@@ -265,6 +290,7 @@ const FlightManagementProvider: FC<{ children: ReactNode }> = ({
       value={{
         routes,
         airplanes,
+        tickets,
         flights,
         selectedFlight,
         loading,
@@ -274,6 +300,7 @@ const FlightManagementProvider: FC<{ children: ReactNode }> = ({
         createReservation,
         registerPlane,
         fetchRoutes,
+        fetchTickets,
         fetchFlights,
         fetchFlightDetails,
         filterFlights,

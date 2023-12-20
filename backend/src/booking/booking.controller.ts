@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -19,7 +20,12 @@ export class BookingController {
   @HttpCode(HttpStatus.CREATED)
   @Post('create')
   async create(@GetUser('id') userId: number, @Body() dto: CreateBookingDto) {
-    console.log(dto, userId);
     return this.bookingService.create(dto.flightId, dto.seatId, userId);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get()
+  async getByUserId(@GetUser('id') userId: number) {
+    return this.bookingService.getByUserId(userId);
   }
 }
