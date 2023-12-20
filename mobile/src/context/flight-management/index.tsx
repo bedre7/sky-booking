@@ -105,9 +105,7 @@ const FlightManagementProvider: FC<{ children: ReactNode }> = ({
     try {
       setLoading(true);
       setError(null);
-      console.log(flightId);
       const { data } = await ApiService.get(`flight/${flightId}`, accessToken);
-      console.log(data);
       setSelectedFlight(data);
     } catch (error: any) {
       setError(error.message);

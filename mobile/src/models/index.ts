@@ -29,6 +29,15 @@ export interface IFlight {
   };
 }
 
+export interface ITicket {
+  id: number;
+  origin: string;
+  destination: string;
+  departureTime: string;
+  arrivalTime: string;
+  seatNumber: string;
+}
+
 export interface IFlightDetails extends IFlight {
   airplaneId: number;
   seats: ISeat[];

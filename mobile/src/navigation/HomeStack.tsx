@@ -12,7 +12,7 @@ import BookingStackScreen from "../components/Tabs/Booking/BookingStack";
 export type BottomStackParamList = {
   Create: undefined;
   Profile: undefined;
-  Booking: undefined;
+  BookingStack: undefined;
   Tickets: undefined;
 };
 
@@ -31,9 +31,11 @@ const HomeStack = () => {
       }}
     >
       <BottomTab.Screen
-        name="Booking"
+        name="BookingStack"
         component={BookingStackScreen}
         options={{
+          headerTitle: "Booking",
+          tabBarLabel: "Booking",
           headerTitleStyle: {
             fontSize: 20,
           },

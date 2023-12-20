@@ -3,6 +3,7 @@ import React from "react";
 import Button from "../../common/Button";
 import UserAvatar from "./UserAvatar";
 import { useAuth } from "../../../context/Auth";
+import appTheme from "../../../styles";
 
 const Profile = () => {
   const { currentUser, logout } = useAuth();
@@ -33,10 +34,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: appTheme.colors.gray8,
   },
   text: {
     fontSize: 20,
     marginBottom: 20,
+    color: appTheme.colors.gray5,
   },
   themeButton: {
     alignItems: "flex-end",

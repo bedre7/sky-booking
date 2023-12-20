@@ -47,27 +47,18 @@ export class FlightService {
       select: { ...flightSelect, airplaneId: true },
     });
 
-    const bookedSeats = new Set(
-      await this.prismaService.booking.findMany({
-        where: {
-          flightId,
-        },
-        select: {
-          seatId: true,
-        },
-      }),
-    );
-
     const allSeats = await this.prismaService.seat.findMany({
       where: {
         airplaneId: flight.airplaneId,
       },
     });
 
+    const bookedSeats = await this.getBookedSeats(flightId);
+
     const seatsStatus = allSeats.map((seat) => {
       return {
         ...seat,
-        isAvaliable: !bookedSeats.has({ seatId: seat.id }),
+        isAvaliable: !bookedSeats.has(seat.id),
       };
     });
 
@@ -75,6 +66,19 @@ export class FlightService {
       ...flight,
       seats: seatsStatus,
     };
+  }
+
+  private async getBookedSeats(flightId: number) {
+    const bookedSeats = await this.prismaService.booking.findMany({
+      where: {
+        flightId,
+      },
+      select: {
+        seatId: true,
+      },
+    });
+
+    return new Set(bookedSeats.map((seat) => seat.seatId));
   }
 
   async filter(origin: string, destination: string, departure: string) {

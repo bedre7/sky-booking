@@ -1,40 +1,21 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React, { FC } from "react";
-import appTheme from "../../../styles";
+import { ITicket } from "../../../models";
 import { getDuration } from "../../../utils";
-import { Entypo, Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { BookingStackProps } from "./BookingStack";
+import appTheme from "../../../styles";
+import { Entypo, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
-interface FlightItemProps {
-  id: number;
-  origin: string;
-  destination: string;
-  departure: string;
-  arrival: string;
-  price?: number;
-}
-
-const FlightItem: FC<FlightItemProps> = ({
-  id,
+const TicketItem: FC<ITicket> = ({
   origin,
   destination,
-  departure,
-  arrival,
-  price,
+  departureTime,
+  arrivalTime,
+  seatNumber,
 }) => {
-  const duration = getDuration(departure, arrival);
-  const navigation = useNavigation<BookingStackProps>();
+  const duration = getDuration(departureTime, arrivalTime);
 
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={() =>
-        navigation.navigate("BookingForm", {
-          flightId: id,
-        })
-      }
-    >
+    <View style={styles.container}>
       <View style={styles.main}>
         <View style={styles.row}>
           <Text style={styles.text}>{origin}</Text>
@@ -47,29 +28,31 @@ const FlightItem: FC<FlightItemProps> = ({
           <Text style={styles.text}>{destination}</Text>
         </View>
         <View style={styles.timeContainer}>
-          <Text style={styles.time}>{departure.substring(11, 16)}</Text>
+          <Text style={styles.time}>{departureTime.substring(11, 16)}</Text>
           <Ionicons
             name="airplane-outline"
             size={16}
             color={appTheme.colors.gray5}
           />
-          <Text style={styles.time}>{arrival.substring(11, 16)}</Text>
+          <Text style={styles.time}>{arrivalTime.substring(11, 16)}</Text>
         </View>
         <View style={styles.duration}>
           <Ionicons name="time-outline" size={16} color={appTheme.colors.red} />
           <Text style={styles.text}>{duration.toString()}</Text>
         </View>
       </View>
-      {price && (
-        <View style={styles.priceBox}>
-          <Text style={styles.priceText}>${price}</Text>
-        </View>
-      )}
-    </TouchableOpacity>
+      <MaterialCommunityIcons
+        name="seat-passenger"
+        size={32}
+        color={appTheme.colors.primary}
+      >
+        {seatNumber}
+      </MaterialCommunityIcons>
+    </View>
   );
 };
 
-export default FlightItem;
+export default TicketItem;
 
 const styles = StyleSheet.create({
   container: {
@@ -112,19 +95,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
-  },
-  priceBox: {
-    backgroundColor: appTheme.colors.green,
-    color: appTheme.colors.white,
-    paddingVertical: 5,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-    alignSelf: "flex-end",
-  },
-  priceText: {
-    color: appTheme.colors.white,
-    fontWeight: "bold",
-    fontSize: 18,
   },
   line: {
     transform: [{ rotate: "90deg" }, { translateX: -8 }],
