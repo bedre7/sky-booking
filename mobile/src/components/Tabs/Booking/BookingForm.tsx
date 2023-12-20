@@ -21,6 +21,7 @@ import {
   Toast,
 } from "react-native-alert-notification";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useAuth } from "../../../context/Auth";
 
 interface SeatProps {
   id: number;
@@ -59,6 +60,7 @@ const BookingForm: FC<Props> = ({ route }) => {
   const [selectedSeat, setSelectedSeat] = useState<ISeat | null>(null);
   const { loading, selectedFlight, fetchFlightDetails, createReservation } =
     useFlightManagement();
+  const { currentUser } = useAuth();
   const navigation = useNavigation<BookingStackProps>();
   const { flightId } = route.params;
 
@@ -66,7 +68,7 @@ const BookingForm: FC<Props> = ({ route }) => {
     fetchFlightDetails(flightId);
   }, [flightId]);
 
-  if (loading && !selectedFlight) {
+  if (loading) {
     return (
       <ActivityIndicator
         size="large"
@@ -160,21 +162,23 @@ const BookingForm: FC<Props> = ({ route }) => {
           />
         </View>
         <View style={styles.buttonContainer}>
-          <Button
-            style={styles.saveButton}
-            onPress={onReserve}
-            disabled={!selectedSeat}
-            loading={loading}
-          >
-            Reserve
-          </Button>
+          {!currentUser?.isAdmin && (
+            <Button
+              style={styles.saveButton}
+              onPress={onReserve}
+              disabled={!selectedSeat}
+              loading={loading}
+            >
+              Reserve
+            </Button>
+          )}
           <Button
             onPress={() => {
               navigation.navigate("Booking");
             }}
             style={styles.cancelButton}
           >
-            Cancel
+            {currentUser?.isAdmin ? "Go Back" : "Cancel"}
           </Button>
         </View>
       </View>

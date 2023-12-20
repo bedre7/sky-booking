@@ -8,6 +8,7 @@ import appTheme from "../styles";
 import { Ionicons } from "@expo/vector-icons";
 import LogoutIcon from "../components/LogoutIcon";
 import BookingStackScreen from "../components/Tabs/Booking/BookingStack";
+import { useAuth } from "../context/Auth";
 
 export type BottomStackParamList = {
   Create: undefined;
@@ -20,6 +21,8 @@ const BottomTab = createBottomTabNavigator<BottomStackParamList>();
 export type HomeStackProps = BottomTabNavigationProp<BottomStackParamList>;
 
 const HomeStack = () => {
+  const { currentUser } = useAuth();
+
   return (
     <BottomTab.Navigator
       screenOptions={{
@@ -44,30 +47,34 @@ const HomeStack = () => {
           ),
         }}
       />
-      <BottomTab.Screen
-        name="Create"
-        component={Create}
-        options={{
-          headerTitleStyle: {
-            fontSize: 20,
-          },
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="add-circle" size={size} color={color} />
-          ),
-        }}
-      />
-      <BottomTab.Screen
-        name="Tickets"
-        component={Tickets}
-        options={{
-          headerTitleStyle: {
-            fontSize: 20,
-          },
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="pricetag" size={size} color={color} />
-          ),
-        }}
-      />
+      {currentUser?.isAdmin && (
+        <BottomTab.Screen
+          name="Create"
+          component={Create}
+          options={{
+            headerTitleStyle: {
+              fontSize: 20,
+            },
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="add-circle" size={size} color={color} />
+            ),
+          }}
+        />
+      )}
+      {!currentUser?.isAdmin && (
+        <BottomTab.Screen
+          name="Tickets"
+          component={Tickets}
+          options={{
+            headerTitleStyle: {
+              fontSize: 20,
+            },
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="pricetag" size={size} color={color} />
+            ),
+          }}
+        />
+      )}
       <BottomTab.Screen
         name="Profile"
         component={Profile}
