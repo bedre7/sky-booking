@@ -13,29 +13,14 @@ import {
 import { JwtGuard } from 'src/auth/guard';
 import { FlightService } from './flight.service';
 import CreateFlightDto from './dto/flight.dto';
+import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { Roles } from 'src/auth/decorator/roles.decorator';
+import { Role } from '@prisma/client';
 
-@UseGuards(JwtGuard)
+@UseGuards(JwtGuard, RolesGuard)
 @Controller('flight')
 export class FlightController {
   constructor(private flightService: FlightService) {}
-
-  @HttpCode(HttpStatus.OK)
-  @Get()
-  async getAll() {
-    return this.flightService.getAll();
-  }
-
-  @HttpCode(HttpStatus.OK)
-  @Get('/:id')
-  async getDetails(@Param('id', ParseIntPipe) flightId: number) {
-    return this.flightService.getDetails(flightId);
-  }
-
-  @HttpCode(HttpStatus.CREATED)
-  @Post('create')
-  async create(@Body() dto: CreateFlightDto) {
-    return this.flightService.create(dto);
-  }
 
   @Get('filter')
   async filter(
@@ -43,5 +28,22 @@ export class FlightController {
   ) {
     const { origin, destination, departure } = query;
     return this.flightService.filter(origin, destination, departure);
+  }
+
+  @Get('/:id')
+  async getDetails(@Param('id', ParseIntPipe) flightId: number) {
+    return this.flightService.getDetails(flightId);
+  }
+
+  @Get()
+  async getAll() {
+    return this.flightService.getAll();
+  }
+
+  @Post('create')
+  @Roles(Role.ADMIN)
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() dto: CreateFlightDto) {
+    return this.flightService.create(dto);
   }
 }

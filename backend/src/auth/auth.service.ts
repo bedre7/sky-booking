@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -26,7 +27,7 @@ export class AuthService {
         },
       });
 
-      return this.sendTokens(user);
+      return this.sendTokens({ ...user, isAdmin: user.role === Role.ADMIN });
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -59,7 +60,7 @@ export class AuthService {
       });
     }
 
-    return this.sendTokens(user);
+    return this.sendTokens({ ...user, isAdmin: user.role === Role.ADMIN });
   }
 
   async refresh(refreshToken: string) {
@@ -79,6 +80,7 @@ export class AuthService {
           id: payload.id,
           email: payload.email,
           username: payload.username,
+          isAdmin: payload.isAdmin,
         }),
       };
     } catch (error) {
@@ -88,7 +90,12 @@ export class AuthService {
     }
   }
 
-  private sendTokens(payload: { id: number; email: string; username: string }) {
+  private sendTokens(payload: {
+    id: number;
+    email: string;
+    username: string;
+    isAdmin: boolean;
+  }) {
     return {
       accessToken: this.signAccessToken(payload),
       refreshToken: this.signRefreshToken(payload),
@@ -99,7 +106,7 @@ export class AuthService {
     id: number;
     email: string;
     username: string;
-    isAdmin?: boolean;
+    isAdmin: boolean;
   }) {
     const signOptions = {
       expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES_IN'),
@@ -113,7 +120,7 @@ export class AuthService {
     id: number;
     email: string;
     username: string;
-    isAdmin?: boolean;
+    isAdmin: boolean;
   }) {
     const signOptions = {
       expiresIn: this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRES_IN'),

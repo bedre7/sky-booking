@@ -30,7 +30,7 @@ const Tickets = () => {
             color={appTheme.colors.gray5}
           />
           <Text style={{ fontSize: 18, color: appTheme.colors.gray5 }}>
-            No flights available
+            No tickets found
           </Text>
         </View>
       )}

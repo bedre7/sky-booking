@@ -173,6 +173,7 @@ const FlightManagementProvider: FC<{ children: ReactNode }> = ({
       setFlights(data);
     } catch (error: any) {
       setError(error.message);
+      console.log(error);
     } finally {
       setLoading(false);
     }

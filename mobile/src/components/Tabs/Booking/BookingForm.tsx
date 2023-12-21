@@ -64,10 +64,6 @@ const BookingForm: FC<Props> = ({ route }) => {
             navigation.navigate("Booking");
           },
         });
-        createNotification(
-          "Reservation",
-          `Seat ${selectedSeat?.seatNumber} has been reserved, Please make payment to confirm your reservation`
-        );
       })
       .catch((error) => {
         Toast.show({

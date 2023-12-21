@@ -36,6 +36,11 @@ export class FlightService {
   async getAll() {
     return this.prismaService.flight.findMany({
       select: flightSelect,
+      where: {
+        departureTime: {
+          gte: new Date(),
+        },
+      },
     });
   }
 
