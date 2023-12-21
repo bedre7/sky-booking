@@ -3,7 +3,7 @@ import {
   BottomTabNavigationProp,
   createBottomTabNavigator,
 } from "@react-navigation/bottom-tabs";
-import { Booking, Tickets, Create, Profile } from "../components/Tabs";
+import { Tickets, Create, Profile } from "../components/Tabs";
 import appTheme from "../styles";
 import { Ionicons } from "@expo/vector-icons";
 import LogoutIcon from "../components/LogoutIcon";

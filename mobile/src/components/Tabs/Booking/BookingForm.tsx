@@ -3,7 +3,6 @@ import {
   FlatList,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import React, { FC, useEffect, useState } from "react";
@@ -22,36 +21,8 @@ import {
 } from "react-native-alert-notification";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useAuth } from "../../../context/Auth";
-
-interface SeatProps {
-  id: number;
-  index: number;
-  seatNumber: string;
-  isAvaliable: boolean;
-  selected: boolean;
-  onSelect: () => void;
-}
-
-const SeatItem: FC<SeatProps> = ({
-  index,
-  isAvaliable,
-  seatNumber,
-  selected,
-  onSelect,
-}) => (
-  <TouchableOpacity
-    style={[
-      styles.seat,
-      { marginRight: (index + 1) % 6 === 3 ? 30 : 5 },
-      isAvaliable ? styles.available : styles.unavailableSeat,
-      selected && styles.selectedSeat,
-    ]}
-    onPress={onSelect}
-    disabled={!isAvaliable}
-  >
-    <Text style={styles.seatText}>{seatNumber}</Text>
-  </TouchableOpacity>
-);
+import SeatItem from "./SeatItem";
+import { createNotification } from "../../../utils";
 
 interface Props
   extends NativeStackScreenProps<BookingStackParamList, "BookingForm"> {}
@@ -93,6 +64,10 @@ const BookingForm: FC<Props> = ({ route }) => {
             navigation.navigate("Booking");
           },
         });
+        createNotification(
+          "Reservation",
+          `Seat ${selectedSeat?.seatNumber} has been reserved, Please make payment to confirm your reservation`
+        );
       })
       .catch((error) => {
         Toast.show({
@@ -211,7 +186,6 @@ const styles = StyleSheet.create({
   main: {
     backgroundColor: appTheme.colors.gray8,
     flex: 1,
-    // justifyContent: "center",
     alignItems: "center",
   },
   saveButton: {
@@ -233,27 +207,6 @@ const styles = StyleSheet.create({
   gridContainer: {
     justifyContent: "center",
     alignItems: "center",
-  },
-  seat: {
-    width: 36,
-    height: 36,
-    margin: 5,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#e0e0e0",
-    borderRadius: 5,
-  },
-  selectedSeat: {
-    backgroundColor: appTheme.colors.green,
-  },
-  unavailableSeat: {
-    backgroundColor: appTheme.colors.red,
-  },
-  available: {
-    backgroundColor: appTheme.colors.gray5,
-  },
-  seatText: {
-    fontSize: 14,
   },
   routeInfo: {
     justifyContent: "space-between",

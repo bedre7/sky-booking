@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import { IUser } from "./types";
-import ApiService from "../../api";
+import ApiClient from "../../api";
 import { jwtDecode } from "jwt-decode";
 import "core-js/stable/atob";
 
@@ -44,7 +44,7 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const { data } = await ApiService.post("auth/login", {
+      const { data } = await ApiClient.post("auth/login", {
         email,
         password,
       });
@@ -62,7 +62,7 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const { data } = await ApiService.post("/auth/signup", {
+      const { data } = await ApiClient.post("/auth/signup", {
         email,
         username,
         password,
@@ -80,7 +80,7 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      await ApiService.post("/auth/logout");
+      await ApiClient.post("/auth/logout");
       setAccessToken("");
       setCurrentUser(null);
     } catch (error: any) {
@@ -94,7 +94,7 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const { data } = await ApiService.post("/auth/refresh");
+      const { data } = await ApiClient.post("/auth/refresh");
       setAccessToken(data.accessToken);
       setCurrentUser(jwtDecode(data.accessToken));
     } catch (error: any) {

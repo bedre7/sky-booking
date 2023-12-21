@@ -1,7 +1,7 @@
 import axios, { Axios } from "axios";
 import { API_URL } from "@env";
 
-class ApiService {
+class ApiClient {
   private baseUrl: string;
   private axiosInstance: Axios;
 
@@ -74,4 +74,4 @@ class ApiService {
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default new ApiService();
+export default new ApiClient();
