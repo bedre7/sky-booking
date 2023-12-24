@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "odev",
-    "slug": "odev",
+    "name": "sky-booking",
+    "slug": "sky-booking",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

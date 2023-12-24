@@ -2,13 +2,11 @@ import axios, { Axios } from "axios";
 import { API_URL } from "@env";
 
 class ApiClient {
-  private baseUrl: string;
   private axiosInstance: Axios;
 
   constructor() {
-    this.baseUrl = "http://10.0.2.2:3000";
     this.axiosInstance = axios.create({
-      baseURL: this.baseUrl,
+      baseURL: API_URL,
       headers: {
         "Content-Type": "application/json",
       },

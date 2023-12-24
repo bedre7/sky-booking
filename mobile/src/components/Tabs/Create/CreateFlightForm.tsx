@@ -105,14 +105,14 @@ const CreateFlightForm: FC<CreateFlightFormProps> = ({ id, onClose }) => {
         <View style={styles.form}>
           <Text style={styles.header}>Create Flight</Text>
           <Input
-            placeholder="Flight Number"
+            label="Flight Number"
             value={formik.values.flightNumber}
             onUpdateValue={formik.handleChange("flightNumber")}
             errorMessage={formik.errors.flightNumber}
           />
 
           <Input
-            placeholder="Price"
+            label="Price"
             value={formik.values.price.toString()}
             onUpdateValue={(value) => {
               formik.setFieldValue("price", parseInt(value) || 0);

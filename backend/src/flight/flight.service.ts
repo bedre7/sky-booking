@@ -89,19 +89,24 @@ export class FlightService {
   async filter(origin: string, destination: string, departure: string) {
     return this.prismaService.flight.findMany({
       where: {
-        route: {
-          origin: {
-            contains: origin,
-            mode: 'insensitive',
+        ...(departure && {
+          departureTime: {
+            gte: new Date(departure),
           },
-          destination: {
-            contains: destination,
-            mode: 'insensitive',
-          },
-        },
-        departureTime: {
-          gte: new Date(departure),
-        },
+        }),
+        ...(origin &&
+          destination && {
+            route: {
+              origin: {
+                contains: origin,
+                mode: 'insensitive',
+              },
+              destination: {
+                contains: destination,
+                mode: 'insensitive',
+              },
+            },
+          }),
       },
       select: flightSelect,
     });

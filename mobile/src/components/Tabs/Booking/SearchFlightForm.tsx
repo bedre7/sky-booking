@@ -31,9 +31,7 @@ const SearchFlightForm = () => {
   });
 
   useEffect(() => {
-    if (formik.values.from && formik.values.to && departureDate) {
-      formik.handleSubmit();
-    }
+    if (departureDate) formik.handleSubmit();
   }, [formik.values.from, formik.values.to, departureDate]);
 
   return (

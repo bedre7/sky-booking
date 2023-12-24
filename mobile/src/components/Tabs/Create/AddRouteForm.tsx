@@ -47,10 +47,11 @@ const AddRouteForm: FC<AddRouteFormProps> = ({ id, onClose }) => {
           });
         })
         .catch((error) => {
-          Toast.show({
-            type: ALERT_TYPE.WARNING,
-            title: "Warning",
+          Dialog.show({
+            type: ALERT_TYPE.DANGER,
+            title: "Error",
             textBody: error.message,
+            button: "Close",
           });
         });
     },

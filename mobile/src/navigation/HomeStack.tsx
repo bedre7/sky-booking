@@ -37,8 +37,8 @@ const HomeStack = () => {
         name="BookingStack"
         component={BookingStackScreen}
         options={{
-          headerTitle: "Booking",
-          tabBarLabel: "Booking",
+          headerTitle: currentUser?.isAdmin ? "Flights" : "Search",
+          tabBarLabel: currentUser?.isAdmin ? "Flights" : "Search",
           headerTitleStyle: {
             fontSize: 20,
           },
