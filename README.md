@@ -1,4 +1,6 @@
-<img src="./mobile/assets/logo.png" style="width: 100%;"></img>
+<div style="display:flex; align-items: center; justify-content: center;">
+<img src="./mobile/assets/logo.png" style="height: 250px;"/>
+</div>
 
 ## 📝 About
 
