@@ -83,8 +83,6 @@ This project is a mobile app that allows users to make flight reservations easil
     <td><img src="./mobile/screenshots/Screenshot_1703343603.png"></td>
     <td><img src="./mobile/screenshots/Screenshot_1703343607.png"></td>
   </tr>
-  <tr>
-    <td><img src="./mobile/screenshots/Screenshot_1703343614.png"></td>
 </table>
 
 ## 🛠️ Installation and setup instructions
@@ -111,22 +109,7 @@ This project is a mobile app that allows users to make flight reservations easil
       JWT_REFRESH_TOKEN_SECRET="<your-refresh-token-secret-key>"
       JWT_REFRESH_TOKEN_EXPIRES_IN="1d"
       ```
-   4. Install the Prisma CLI
-      <br><br>
-      ```sh
-      npm install -g prisma
-      ```
-   5. Run the migrations
-      <br><br>
-      ```sh
-      npx prisma migrate dev
-      ```
-   6. Generate the Prisma client
-      <br><br>
-      ```sh
-      npx prisma generate
-      ```
-   7. Start the server
+   4. Start the server
       <br><br>
       ```sh
       npm run start:dev
