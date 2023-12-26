@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import React from "react";
 import { useAuth } from "../context/Auth";
 import { Ionicons } from "@expo/vector-icons";

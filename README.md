@@ -4,7 +4,7 @@
 
 ## 📝 About
 
-This project is a mobile app that allows users to make flight reservations easily using their smartphones.
+This project is a mobile app that allows users to make flight reservations easily using their smartphone.
 
 ## 🧱 Technologies used
 

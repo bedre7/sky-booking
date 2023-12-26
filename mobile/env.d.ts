@@ -1,4 +1,4 @@
 declare module "@env" {
-  export const API_URL: string;
-  export const API_KEY: string;
+  export const LOCAL_API_URL: string;
+  export const HOSTED_API_URL: string;
 }

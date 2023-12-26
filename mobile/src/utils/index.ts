@@ -1,5 +1,4 @@
 import { differenceInMinutes, parse } from "date-fns";
-import * as Notifications from "expo-notifications";
 
 export function getDuration(
   startTimestamp: string,
@@ -33,23 +32,3 @@ export function getDuration(
     return `${minutes} minutes`;
   }
 }
-
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
-});
-
-export const createNotification = async (title: string, body: string) => {
-  Notifications.scheduleNotificationAsync({
-    content: {
-      title,
-      body,
-    },
-    trigger: {
-      seconds: 1,
-    },
-  });
-};

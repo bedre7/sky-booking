@@ -22,7 +22,6 @@ export type HomeStackProps = BottomTabNavigationProp<BottomStackParamList>;
 
 const HomeStack = () => {
   const { currentUser } = useAuth();
-
   return (
     <BottomTab.Navigator
       screenOptions={{

@@ -1,12 +1,12 @@
 import axios, { Axios } from "axios";
-import { API_URL } from "@env";
+import { LOCAL_API_URL, HOSTED_API_URL } from "@env";
 
 class ApiClient {
   private axiosInstance: Axios;
 
   constructor() {
     this.axiosInstance = axios.create({
-      baseURL: API_URL,
+      baseURL: HOSTED_API_URL,
       headers: {
         "Content-Type": "application/json",
       },
@@ -14,10 +14,6 @@ class ApiClient {
     });
     this.axiosInstance.interceptors.response.use(
       (response) => {
-        // if (response?.data) {
-        //   return response.data;
-        // }
-
         return response;
       },
       (error) => {
