@@ -1,12 +1,20 @@
-import { differenceInMinutes, format, parse } from "date-fns";
+import { differenceInMinutes, parse } from "date-fns";
 
 export function getDuration(
   startTimestamp: string,
   endTimestamp: string
 ): string {
   // Parse the date strings using date-fns parse function
-  const startTime = parse(startTimestamp, "yyyy/MM/dd HH:mm", new Date());
-  const endTime = parse(endTimestamp, "yyyy/MM/dd HH:mm", new Date());
+  const startTime = parse(
+    startTimestamp,
+    "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+    new Date()
+  );
+  const endTime = parse(
+    endTimestamp,
+    "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+    new Date()
+  );
 
   // Calculate the difference in minutes
   const minutes = differenceInMinutes(endTime, startTime);
@@ -16,11 +24,11 @@ export function getDuration(
     const remainingMinutes = minutes % 60;
 
     if (remainingMinutes > 0) {
-      return `${hours} ${hours === 1 ? "hr" : "hrs"} ${remainingMinutes} mins`;
+      return `${hours}:${String(remainingMinutes).padStart(2, "0")} hours`;
     } else {
-      return `${hours} ${hours === 1 ? "hr" : "hrs"}`;
+      return `${hours} hours`;
     }
   } else {
-    return `${minutes} ${minutes === 1 ? "min" : "mins"}`;
+    return `${minutes} minutes`;
   }
 }

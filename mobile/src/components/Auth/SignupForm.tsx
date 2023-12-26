@@ -76,8 +76,9 @@ const SignupForm = () => {
         style={styles.button1}
         onPress={formik.handleSubmit}
         disabled={loading}
+        loading={loading}
       >
-        {loading ? "Loading..." : "Sign up"}
+        Sign up
       </Button>
       <Text style={styles.text}>Already have an account? </Text>
       <Button style={styles.button2} onPress={onNavigateToLogin}>

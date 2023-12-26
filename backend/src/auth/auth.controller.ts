@@ -15,8 +15,8 @@ import { Request, Response } from 'express';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @HttpCode(HttpStatus.CREATED)
   @Post('signup')
+  @HttpCode(HttpStatus.CREATED)
   async signup(@Body() dto: SignUpDto, @Res() response: Response) {
     try {
       const { accessToken, refreshToken } = await this.authService.signup(dto);
@@ -32,7 +32,6 @@ export class AuthController {
     }
   }
 
-  @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(@Body() dto: LoginDto, @Res() response: Response) {
     try {
@@ -55,7 +54,6 @@ export class AuthController {
     return this.authService.refresh(refreshToken);
   }
 
-  @HttpCode(HttpStatus.OK)
   @Post('logout')
   logout(@Res() response: Response) {
     response.clearCookie('refreshToken');

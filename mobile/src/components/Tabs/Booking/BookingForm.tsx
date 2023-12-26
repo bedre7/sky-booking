@@ -1,61 +1,159 @@
-import { StyleSheet, View } from "react-native";
-import React from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import React, { FC, useEffect, useState } from "react";
 import appTheme from "../../../styles";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import Input from "../../common/Input";
-import DatePicker from "react-native-modern-datepicker";
+import Button from "../../common/Button";
+import { MaterialCommunityIcons, Ionicons, Entypo } from "@expo/vector-icons";
+import { useFlightManagement } from "../../../context/flight-management";
+import { useNavigation } from "@react-navigation/native";
+import { BookingStackParamList, BookingStackProps } from "./BookingStack";
+import { ISeat } from "../../../models";
+import {
+  ALERT_TYPE,
+  Dialog,
+  AlertNotificationRoot,
+  Toast,
+} from "react-native-alert-notification";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useAuth } from "../../../context/Auth";
+import SeatItem from "./SeatItem";
+import { createNotification } from "../../../utils";
 
-const BookingForm = () => {
-  const validationSchema = Yup.object().shape({
-    from: Yup.string().required("From is required"),
-    to: Yup.string().required("To is required"),
-    date: Yup.string().required("Date is required"),
-  });
+interface Props
+  extends NativeStackScreenProps<BookingStackParamList, "BookingForm"> {}
 
-  const formik = useFormik({
-    initialValues: {
-      from: "",
-      to: "",
-      date: "",
-    },
-    onSubmit: (values) => {
-      console.log(values);
-    },
-    validationSchema,
-  });
+const BookingForm: FC<Props> = ({ route }) => {
+  const [selectedSeat, setSelectedSeat] = useState<ISeat | null>(null);
+  const { loading, selectedFlight, fetchFlightDetails, createReservation } =
+    useFlightManagement();
+  const { currentUser } = useAuth();
+  const navigation = useNavigation<BookingStackProps>();
+  const { flightId } = route.params;
+
+  useEffect(() => {
+    fetchFlightDetails(flightId);
+  }, [flightId]);
+
+  if (loading) {
+    return (
+      <ActivityIndicator
+        size="large"
+        color={appTheme.colors.primary}
+        style={{
+          flex: 1,
+          backgroundColor: appTheme.colors.gray8,
+        }}
+      />
+    );
+  }
+
+  const onReserve = () => {
+    createReservation(flightId, selectedSeat?.id!)
+      .then(() => {
+        Dialog.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: "Success",
+          textBody: `Seat ${selectedSeat?.seatNumber} has been reserved`,
+          button: "Close",
+          onHide: () => {
+            navigation.navigate("Booking");
+          },
+        });
+      })
+      .catch((error) => {
+        Toast.show({
+          type: ALERT_TYPE.WARNING,
+          title: "Warning",
+          textBody: error.message,
+        });
+      });
+  };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.form}>
-        <Input
-          label="From"
-          value={formik.values.from}
-          onUpdateValue={formik.handleChange("from")}
-          errorMessage={formik.errors.from}
-        />
-        <Input
-          label="To"
-          value={formik.values.to}
-          onUpdateValue={formik.handleChange("to")}
-          errorMessage={formik.errors.to}
-        />
-        <DatePicker
-          minimumDate={new Date().toISOString()}
-          mode="calendar"
-          options={{
-            backgroundColor: appTheme.colors.gray6,
-            textHeaderColor: appTheme.colors.gray2,
-            textDefaultColor: "#F6E7C1",
-            selectedTextColor: appTheme.colors.gray2,
-            mainColor: "#F4722B",
-            textSecondaryColor: "#D6C7A1",
-            borderColor: "rgba(122, 146, 165, 0.1)",
-          }}
-          onSelectedChange={(date) => formik.setFieldValue("date", date)}
-        />
+    <AlertNotificationRoot theme="dark">
+      <View style={styles.container}>
+        <View style={styles.main}>
+          <View style={styles.routeInfo}>
+            <Text style={styles.routeText}>{selectedFlight?.route.origin}</Text>
+            <Entypo
+              style={styles.line}
+              name="flow-line"
+              size={36}
+              color={appTheme.colors.gray5}
+            />
+            <Text style={styles.routeText}>
+              {selectedFlight?.route.destination}
+            </Text>
+          </View>
+          <View style={styles.timeContainer}>
+            <Text style={styles.time}>
+              {selectedFlight?.departureTime.substring(11, 16)}
+            </Text>
+            <Ionicons
+              name="airplane-outline"
+              size={16}
+              color={appTheme.colors.gray5}
+            />
+            <Text style={styles.time}>
+              {selectedFlight?.arrivalTime.substring(11, 16)}
+            </Text>
+          </View>
+          <View style={styles.seatPriceContainer}>
+            <MaterialCommunityIcons
+              name="seat-passenger"
+              size={32}
+              color={appTheme.colors.primary}
+            >
+              {selectedSeat?.seatNumber}
+            </MaterialCommunityIcons>
+            <View style={styles.priceBox}>
+              <Text style={styles.priceText}>${selectedFlight?.price}</Text>
+            </View>
+          </View>
+          <Text style={styles.subHeader}>Choose seat</Text>
+          <FlatList
+            data={selectedFlight?.seats}
+            renderItem={({ item, index }) => (
+              <SeatItem
+                id={item.id}
+                index={index}
+                seatNumber={item.seatNumber}
+                selected={item.seatNumber === selectedSeat?.seatNumber}
+                isAvaliable={item.isAvaliable}
+                onSelect={() => setSelectedSeat(item)}
+              />
+            )}
+            keyExtractor={(item) => item.id.toString()}
+            numColumns={6}
+          />
+        </View>
+        <View style={styles.buttonContainer}>
+          {!currentUser?.isAdmin && (
+            <Button
+              style={styles.saveButton}
+              onPress={onReserve}
+              disabled={!selectedSeat}
+              loading={loading}
+            >
+              Reserve
+            </Button>
+          )}
+          <Button
+            onPress={() => {
+              navigation.navigate("Booking");
+            }}
+            style={styles.cancelButton}
+          >
+            {currentUser?.isAdmin ? "Go Back" : "Cancel"}
+          </Button>
+        </View>
       </View>
-    </View>
+    </AlertNotificationRoot>
   );
 };
 
@@ -63,12 +161,93 @@ export default BookingForm;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: appTheme.colors.gray8,
+    gap: 0,
+  },
+  header: {
+    fontSize: 24,
+    marginBottom: 25,
+    textAlign: "center",
+    fontWeight: "500",
+    color: appTheme.colors.primary,
+  },
+  subHeader: {
+    fontSize: 16,
+    marginBottom: 10,
+    textAlign: "center",
+    fontWeight: "500",
+    color: appTheme.colors.gray5,
+  },
+  main: {
+    backgroundColor: appTheme.colors.gray8,
+    flex: 1,
+    alignItems: "center",
+  },
+  saveButton: {
+    paddingHorizontal: 50,
+    paddingVertical: 8,
+    backgroundColor: appTheme.colors.green,
+  },
+  cancelButton: {
+    paddingHorizontal: 50,
+    paddingVertical: 10,
+    backgroundColor: appTheme.colors.gray6,
+  },
+  buttonContainer: {
+    backgroundColor: appTheme.colors.gray8,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingBottom: 10,
+  },
+  gridContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  routeInfo: {
+    justifyContent: "space-between",
+    flexDirection: "row",
+    gap: 30,
+    marginVertical: 10,
+  },
+  routeText: {
+    fontSize: 18,
+    color: appTheme.colors.gray5,
+  },
+  timeContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 30,
+  },
+  time: {
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
-    paddingRight: 100,
-    paddingLeft: 10,
+    fontWeight: "bold",
+    color: appTheme.colors.green,
+    fontSize: 16,
   },
-  form: {
+  line: {
+    transform: [{ rotate: "90deg" }, { translateX: -8 }],
+  },
+  priceBox: {
+    backgroundColor: appTheme.colors.green,
+    color: appTheme.colors.white,
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    alignSelf: "flex-end",
+  },
+  priceText: {
+    color: appTheme.colors.white,
+    fontWeight: "bold",
+    fontSize: 24,
+  },
+  seatPriceContainer: {
+    justifyContent: "space-between",
+    flexDirection: "row",
     width: "100%",
+    paddingHorizontal: 30,
+    marginVertical: 10,
   },
 });

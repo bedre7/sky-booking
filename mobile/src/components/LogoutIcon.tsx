@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import React from "react";
 import { useAuth } from "../context/Auth";
 import { Ionicons } from "@expo/vector-icons";
@@ -25,6 +25,6 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 10,
-    color: appTheme.colors.accent,
+    color: appTheme.colors.gray5,
   },
 });

@@ -6,6 +6,13 @@ import Input from "../../common/Input";
 import appTheme from "../../../styles";
 import Button from "../../common/Button";
 import { SelectList } from "react-native-dropdown-select-list";
+import { useFlightManagement } from "../../../context/flight-management";
+import {
+  ALERT_TYPE,
+  Dialog,
+  AlertNotificationRoot,
+  Toast,
+} from "react-native-alert-notification";
 
 interface RegisterPlaneFormProps {
   id: string;
@@ -14,6 +21,7 @@ interface RegisterPlaneFormProps {
 
 const RegisterPlaneForm: FC<RegisterPlaneFormProps> = ({ id, onClose }) => {
   const [capacity, setCapacity] = useState("");
+  const { loading, registerPlane } = useFlightManagement();
   const capacityOptions = [
     { key: "48", value: 48 },
     { key: "60", value: 60 },
@@ -32,47 +40,71 @@ const RegisterPlaneForm: FC<RegisterPlaneFormProps> = ({ id, onClose }) => {
     },
     validationSchema,
     onSubmit: ({ name, model }) => {
-      Alert.alert(name + model + capacity);
+      registerPlane(name, model, parseInt(capacity))
+        .then(() => {
+          Dialog.show({
+            type: ALERT_TYPE.SUCCESS,
+            title: "Success",
+            textBody: `Plane ${name} - ${model} has been registered`,
+            button: "Close",
+            onHide: () => {
+              onClose(id);
+            },
+          });
+        })
+        .catch((error) => {
+          Toast.show({
+            type: ALERT_TYPE.WARNING,
+            title: "Warning",
+            textBody: error.message,
+          });
+        });
     },
   });
 
   return (
-    <View style={styles.container}>
-      <View style={styles.form}>
-        <Text style={styles.header}>Register Plane</Text>
-        <Input
-          placeholder="Name"
-          value={formik.values.name}
-          onUpdateValue={formik.handleChange("name")}
-          errorMessage={formik.errors.name}
-        />
-        <Input
-          placeholder="Model"
-          value={formik.values.model}
-          onUpdateValue={formik.handleChange("model")}
-          errorMessage={formik.errors.model}
-        />
-        <SelectList
-          inputStyles={styles.dropdown}
-          dropdownTextStyles={styles.dropdown}
-          dropdownStyles={styles.dropdown}
-          search={false}
-          data={capacityOptions}
-          setSelected={setCapacity}
-          save="value"
-          placeholder="Set Capacity"
-          boxStyles={styles.dropdown}
-        />
+    <AlertNotificationRoot theme="dark">
+      <View style={styles.container}>
+        <View style={styles.form}>
+          <Text style={styles.header}>Register Plane</Text>
+          <Input
+            placeholder="Name"
+            value={formik.values.name}
+            onUpdateValue={formik.handleChange("name")}
+            errorMessage={formik.errors.name}
+          />
+          <Input
+            placeholder="Model"
+            value={formik.values.model}
+            onUpdateValue={formik.handleChange("model")}
+            errorMessage={formik.errors.model}
+          />
+          <SelectList
+            inputStyles={styles.dropdown}
+            dropdownTextStyles={styles.dropdown}
+            dropdownStyles={styles.dropdown}
+            search={false}
+            data={capacityOptions}
+            setSelected={setCapacity}
+            save="value"
+            placeholder="Set Capacity"
+            boxStyles={styles.dropdown}
+          />
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button
+            onPress={formik.handleSubmit}
+            style={styles.saveButton}
+            loading={loading}
+          >
+            Save
+          </Button>
+          <Button onPress={() => onClose(id)} style={styles.cancelButton}>
+            Cancel
+          </Button>
+        </View>
       </View>
-      <View style={styles.buttonContainer}>
-        <Button onPress={formik.handleSubmit} style={styles.saveButton}>
-          Save
-        </Button>
-        <Button onPress={() => onClose(id)} style={styles.cancelButton}>
-          Cancel
-        </Button>
-      </View>
-    </View>
+    </AlertNotificationRoot>
   );
 };
 

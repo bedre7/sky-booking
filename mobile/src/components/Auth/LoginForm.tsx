@@ -54,8 +54,9 @@ const LoginForm = () => {
         style={styles.button1}
         onPress={formik.handleSubmit}
         disabled={loading}
+        loading={loading}
       >
-        {loading ? "Loading..." : "Login"}
+        Login
       </Button>
       <Text style={styles.text}>Don't have an account?</Text>
       <Button style={styles.button2} onPress={onNavigateToSignup}>

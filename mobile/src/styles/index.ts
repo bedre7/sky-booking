@@ -14,7 +14,7 @@ const appTheme = {
     red: "#F87171",
     yellow: "#FBBF24",
     orange: "#F97316",
-    green: "#34D399",
+    green: "#0caf73",
     white: "#FFFFFF",
     black: "#000000",
     subtleOrangered: "#f9ebeb",

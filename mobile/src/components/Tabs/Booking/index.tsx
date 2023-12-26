@@ -1,54 +1,62 @@
-import { FlatList, StyleSheet, View } from "react-native";
-import React from "react";
+import {
+  FlatList,
+  StyleSheet,
+  View,
+  Text,
+  ActivityIndicator,
+} from "react-native";
+import React, { useEffect } from "react";
 import appTheme from "../../../styles";
 import FlightItem from "./FlightItem";
-import BookingForm from "./BookingForm";
-
-const flights = [
-  {
-    id: 1,
-    origin: "New York, NY",
-    destination: "Los Angeles, CA",
-    departure: "2023/12/14 12:00",
-    arrival: "2023/12/14 14:00",
-    price: 600,
-  },
-  {
-    id: 2,
-    origin: "New Jersey, NJ",
-    destination: "Phoenix, AZ",
-    departure: "2023/12/14 12:00",
-    arrival: "2023/12/14 14:10",
-    price: 680,
-  },
-  {
-    id: 3,
-    origin: "Istanbul, SW",
-    destination: "Valencia, SP",
-    departure: "2023/12/14 15:00",
-    arrival: "2023/12/14 16:00",
-    price: 400,
-  },
-];
+import SearchFlightForm from "./SearchFlightForm";
+import { useFlightManagement } from "../../../context/flight-management";
+import { Ionicons } from "@expo/vector-icons";
 
 const Booking = () => {
+  const { loading, flights, fetchFlights } = useFlightManagement();
+
+  useEffect(() => {
+    fetchFlights();
+  }, []);
+
   return (
     <View style={styles.container}>
-      <BookingForm />
-      <FlatList
-        data={flights}
-        renderItem={({ item }) => (
-          <FlightItem
-            id={item.id}
-            origin={item.origin}
-            destination={item.destination}
-            departure={item.departure}
-            arrival={item.arrival}
-            price={item.price}
+      <SearchFlightForm />
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color={appTheme.colors.primary}
+          style={{ flex: 1, marginTop: 20 }}
+        />
+      ) : flights.length > 0 ? (
+        <FlatList
+          data={flights}
+          renderItem={({ item }) => (
+            <FlightItem
+              id={item.id}
+              origin={item.route.origin}
+              destination={item.route.destination}
+              departure={item.departureTime}
+              arrival={item.arrivalTime}
+              price={item.price}
+            />
+          )}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      ) : (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Ionicons
+            name="ios-sad-outline"
+            size={32}
+            color={appTheme.colors.gray5}
           />
-        )}
-        keyExtractor={(item) => item.id.toString()}
-      />
+          <Text style={{ fontSize: 18, color: appTheme.colors.gray5 }}>
+            No flights available
+          </Text>
+        </View>
+      )}
     </View>
   );
 };

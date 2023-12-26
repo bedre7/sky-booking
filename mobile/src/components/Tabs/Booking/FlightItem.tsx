@@ -1,9 +1,11 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { FC } from "react";
 import appTheme from "../../../styles";
-import { Ionicons } from "@expo/vector-icons";
 import { getDuration } from "../../../utils";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { BookingStackProps } from "./BookingStack";
+
 interface FlightItemProps {
   id: number;
   origin: string;
@@ -13,42 +15,57 @@ interface FlightItemProps {
   price?: number;
 }
 
-const FlightItem: FC<FlightItemProps> = (props) => {
-  const duration = getDuration(props.departure, props.arrival);
+const FlightItem: FC<FlightItemProps> = ({
+  id,
+  origin,
+  destination,
+  departure,
+  arrival,
+  price,
+}) => {
+  const duration = getDuration(departure, arrival);
+  const navigation = useNavigation<BookingStackProps>();
 
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() =>
+        navigation.navigate("BookingForm", {
+          flightId: id,
+        })
+      }
+    >
       <View style={styles.main}>
         <View style={styles.row}>
-          <Text style={styles.text}>{props.origin}</Text>
+          <Text style={styles.text}>{origin}</Text>
           <Entypo
             style={styles.line}
             name="flow-line"
             size={36}
             color={appTheme.colors.gray5}
           />
-          <Text style={styles.text}>{props.destination}</Text>
+          <Text style={styles.text}>{destination}</Text>
         </View>
         <View style={styles.timeContainer}>
-          <Text style={styles.time}>{props.departure.substring(10)}</Text>
+          <Text style={styles.time}>{departure.substring(11, 16)}</Text>
           <Ionicons
             name="airplane-outline"
             size={16}
             color={appTheme.colors.gray5}
           />
-          <Text style={styles.time}>{props.arrival.substring(10)}</Text>
+          <Text style={styles.time}>{arrival.substring(11, 16)}</Text>
         </View>
         <View style={styles.duration}>
           <Ionicons name="time-outline" size={16} color={appTheme.colors.red} />
           <Text style={styles.text}>{duration.toString()}</Text>
         </View>
       </View>
-      {props.price && (
+      {price && (
         <View style={styles.priceBox}>
-          <Text style={styles.priceText}>${props.price}</Text>
+          <Text style={styles.priceText}>${price}</Text>
         </View>
       )}
-    </View>
+    </TouchableOpacity>
   );
 };
 
